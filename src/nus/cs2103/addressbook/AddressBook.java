@@ -153,7 +153,7 @@ public class AddressBook {
     /**
      * Latest command entered by the user.
      */
-    private static String latestUserInput;
+    private static String userCommand;
 
     /**
      * The path to the file used for storing person data.
@@ -174,9 +174,9 @@ public class AddressBook {
         processProgramArgs(args);
         loadDataFromStorage();
         while (!isExitRequested) {
-            latestUserInput = getUserInput();
-            echoUserInput(latestUserInput);
-            String feedback = parseAndExecuteCommand(latestUserInput);
+            userCommand = getUserInput();
+            echoUserCommand(userCommand);
+            String feedback = parseAndExecuteCommand(userCommand);
             showToUser(feedback);
         }
         cleanup();
@@ -203,8 +203,8 @@ public class AddressBook {
     /**
      * Echoes the user input back to the user.
      */
-    private static void echoUserInput(String userInput) {
-        showToUser(System.lineSeparator() + "[Command entered:" + userInput + "]");
+    private static void echoUserCommand(String userCommand) {
+        showToUser(System.lineSeparator() + "[Command entered:" + userCommand + "]");
     }
 
     /*
@@ -353,7 +353,7 @@ public class AddressBook {
      * @return invalid command args feedback message
      */
     private static String getMessageForInvalidCommandInput(String correctUsageInfo) {
-        return String.format(MESSAGE_INVALID_COMMAND_FORMAT, latestUserInput, correctUsageInfo);
+        return String.format(MESSAGE_INVALID_COMMAND_FORMAT, userCommand, correctUsageInfo);
     }
 
     /**
