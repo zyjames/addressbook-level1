@@ -1,6 +1,6 @@
 package nus.cs2103.addressbook;
 /* ==============NOTE TO STUDENTS======================================
- * This class is not written in pure Object-Oriented fashion. 
+ * This class is written in a procedural fashion (i.e. not Object-Oriented)
  * Yes, it is possible to write non-OO code using an OO language.
  * ====================================================================
  */
@@ -8,16 +8,15 @@ package nus.cs2103.addressbook;
 import java.io.*;
 import java.util.*;
 
+/* ==============NOTE TO STUDENTS======================================
+ * This class header comment below is brief because details of how to
+ * use this class are documented elsewhere.
+ * ====================================================================
+ */
+
 /**
- * This class is used to store, remove and retrieve person data which are saved
- * in a text file. Each person has a name, a phone number (p/) and an email (e/).
- *
- * Furthermore, you can search for persons by name using keywords.
- * When multiple items are displayed, they are ordered by insertion time.
- *
- * Further command information can be found in the README or by entering 'help' as input to the program.
- * The program takes 1 argument at the start: the path of the storage file.
- * If no arguments are found, it uses a default storage file path.
+ * This class is used to maintain a list of person data which are saved
+ * in a text file.
  **/
 public class AddressBook {
 
@@ -63,7 +62,6 @@ public class AddressBook {
     public static final String PERSON_STRING_REPRESENTATION = "%1$s " // name
                                                             + PERSON_DATA_PREFIX_PHONE + "%2$s " // phone
                                                             + PERSON_DATA_PREFIX_EMAIL + "%3$s"; // email
-
     public static final String COMMAND_WORD_ADD = "add";
     public static final String COMMAND_ADD_DESC = "Adds a person to the address book.";
     public static final String COMMAND_ADD_PARAMETERS = "[name] "
@@ -98,51 +96,72 @@ public class AddressBook {
     public static final String COMMAND_EXIT_EXAMPLE = COMMAND_WORD_EXIT;
 
 
-    // These are ordering indexes for the different data parameters of a person.
-    // Used by the internal person String[] storage format
+    /* We use a String array to store details of a single person.
+     * The constants given below are the indexes for the different data elements of a person
+     * used by the internal String[] storage format.
+     * For example, a person's name is stored as the 0th element in the array.
+     */
     public static final int PERSON_DATA_INDEX_NAME = 0;
     public static final int PERSON_DATA_INDEX_PHONE = 1;
     public static final int PERSON_DATA_INDEX_EMAIL = 2;
-    public static final int PERSON_DATA_COUNT = 3; // 3 types of internal data for a person
 
-    // Listings displayed to the user use 1-indexing, but the internal model uses 0-indexing
+    /**
+     * The number of data elements for a single person.
+     */
+    public static final int PERSON_DATA_COUNT = 3;
+
+    /**
+     * Offset required to convert between 1-indexing and 0-indexing.COMMAND_
+     */
     public static final int DISPLAYED_INDEX_OFFSET = 1;
 
-    // This filename is used if the user doesn't provide the file name
+    /**
+     * Default file path used if the user doesn't provide the file name.
+     */
 	public static final String DEFAULT_STORAGE_FILEPATH = "storage.txt";
-    // If the first non-whitespace character in a user's input line is this, that line will be ignored.
+
+    /**
+     * If the first non-whitespace character in a user's input line is this, that line will be ignored.
+     */
     public static final char INPUT_COMMENT_MARKER = '#';
 
     /*
      * This variable is declared for the whole class (instead of declaring it
      * inside the readUserCommand() method to facilitate automated testing using
      * the I/O redirection technique. If not, only the first line of the input
-     * text file will be processed. TODO FIND OUT WHY
+     * text file will be processed.
      */
     private static final Scanner SCANNER = new Scanner(System.in);
 
-    // Model tracking all persons in the address book
+    /**
+     * List of all persons in the address book.
+     */
     private static final List<String[]> ALL_PERSONS = new ArrayList<>();
 
     /**
-     * Stores the last viewed person listing (from commands like find and list)
-     * Commands using an index to target a person will refer to the indices in this list.
-     *
-     * Persons in this list are the same objects as the corresponding elements in the backing model.
-     * Deleting persons in the backing model may not necessarily update this latest view snapshot.
+     * Stores the most recent list of persons shown to the user as a result of a user command.
+     * This is a subset of the full list. Deleting persons in the pull list does not delete
+     * those persons from this list.
      */
     private static List<String[]> latestPersonListingView = getAllPersonsInAddressBook(); // initial view is of all
+
+    /**
+     * Latest command entered by the user.
+     */
     private static String latestUserInput;
 
+    /**
+     * The path to the file used for storing person data.
+     */
     private static String storageFilePath;
 
     private static boolean isExitRequested = false;
 
     /*
      * ==============NOTE TO STUDENTS======================================
-     * Notice how this method solves the whole problem at a very high level. We
-     * can understand the high-level logic of the program by reading this method
-     * alone.
+     * Notice how this method solves the whole problem at a very high level.
+     * We can understand the high-level logic of the program by reading this
+     * method alone.
      * ====================================================================
      */
     public static void main(String[] args) {
@@ -159,7 +178,7 @@ public class AddressBook {
 
     /*
      * ==============NOTE TO STUDENTS==========================================
-     * If the reader wants a deeper understanding of the solution, he/she can go
+     * If the reader wants a deeper understanding of the solution, she can go
      * to the next level of abstraction by reading the methods (given below)
      * that is referenced by the method above.
      * ====================================================================
