@@ -56,9 +56,7 @@ public class AddressBook {
                                                             + LS + "\tjava AddressBook"
                                                             + LS + "\tjava AddressBook [custom storage file path]";
     private static final String MESSAGE_INVALID_PERSON_DISPLAYED_INDEX = "The person index provided is invalid";
-    private static final String MESSAGE_INVALID_PERSON_LINE_IN_FILE = "Storage file contents invalid:"
-                                                                   + LS + "\tFile: %1$s\tLine %2$d:"
-                                                                   + LS + "\tNot a valid person:\t%3$s";
+    private static final String MESSAGE_INVALID_STORAGE_FILE_CONTENT = "Storage file has invalid content";
     private static final String MESSAGE_PERSON_NOT_IN_ADDRESSBOOK = "Person could not be found in address book";
     private static final String MESSAGE_ERROR_CREATING_STORAGE_FILE = "Error: unable to create file: %1$s";
     private static final String MESSAGE_ERROR_MISSING_STORAGE_FILE = "Storage file missing: %1$s";
@@ -667,27 +665,27 @@ public class AddressBook {
 
     /**
      * Converts contents of a file into a list of persons.
-     * Exits program if any errors in reading or decoding was encountered.
+     * Shows error messages and exits program if any errors in reading or decoding was encountered.
      *
      * @param filePath file to load from
      * @return the list of decoded persons
      */
     private static List<String[]> loadPersonsFromFile(String filePath) {
-        final List<String[]> decodedPersons = new ArrayList<>();
-        try {
-            final List<String> linesInFile = Files.readAllLines(Paths.get(filePath));
+        final Optional<List<String[]>> successfullyDecoded = decodePersonsFromStrings(getLinesInFile(filePath));
+        if (!successfullyDecoded.isPresent()) {
+            showToUser(MESSAGE_INVALID_STORAGE_FILE_CONTENT);
+            exitProgram();
+        }
+        return successfullyDecoded.get();
+    }
 
-            int lineNumber = 0;
-            for (String line : linesInFile) {
-                lineNumber++;
-                final Optional<String[]> successfullyDecodedPerson = decodePersonFromString(line);
-                // unable to decode person means file content format invalid; stop program
-                if (!successfullyDecodedPerson.isPresent()) {
-                    showToUser(getMessageForInvalidPersonLineInFile(filePath, lineNumber, line));
-                    exitProgram();
-                }
-                decodedPersons.add(successfullyDecodedPerson.get());
-            }
+    /**
+     * Gets all lines in the specified file as a list of strings. Line separators are removed.
+     * Shows error messages and exits program if unable to read from file.
+     */
+    private static List<String> getLinesInFile(String filePath) {
+        try {
+            return Files.readAllLines(Paths.get(filePath));
         } catch (FileNotFoundException fnfe) {
             showToUser(String.format(MESSAGE_ERROR_MISSING_STORAGE_FILE, filePath));
             exitProgram();
@@ -695,20 +693,7 @@ public class AddressBook {
             showToUser(String.format(MESSAGE_ERROR_READING_FROM_FILE, filePath));
             exitProgram();
         }
-        return decodedPersons;
-    }
-
-    /**
-     * Constructs a feedback message to pinpoint the first invalid person line found in the storage file.
-     *
-     * @see #loadPersonsFromFile(String)
-     * @param file problem file as string
-     * @param lineNumber problem line number
-     * @param lineContents contents of problem line
-     * @return feedback message for invalid person line found in file
-     */
-    private static String getMessageForInvalidPersonLineInFile(String file, int lineNumber, String lineContents) {
-        return String.format(MESSAGE_INVALID_PERSON_LINE_IN_FILE, file, lineNumber, lineContents);
+        return Collections.emptyList(); // the program should have exited before this
     }
 
     /**
