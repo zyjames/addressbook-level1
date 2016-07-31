@@ -1,0 +1,30 @@
+sfdfd
+add Adam Brown p/111111 e/adam@gmail.com
+list
+add Betsy Choo p/222222 e/benchoo@nus.edu.sg
+list
+add Charlie Dickson p/33333333 e/charlie.d@nus.edu.sg
+list
+add Dickson Ee p/444444 e/dickson@nus.edu.sg
+list
+find
+find bet
+find betsy
+find Betsy
+find Dickson
+find Charlie Betsy
+delete
+delete 4
+list
+delete 4
+list
+delete 2
+list
+find Betsy
+delete 1
+delete 1
+list
+delete 1
+delete 2
+list
+exit

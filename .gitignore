@@ -16,3 +16,4 @@ storage.txt
 hs_err_pid*
 .idea/
 AddressBook.iml
+test/actual.txt

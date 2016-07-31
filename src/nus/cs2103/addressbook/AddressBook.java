@@ -170,10 +170,18 @@ public class AddressBook {
         loadAddressBookModelFromStorage();
         while (!isExitRequested) {
             latestUserInput = getUserInput();
+            echoUserInput(latestUserInput);
             String feedback = parseAndExecuteCommand(latestUserInput);
             showToUser(feedback);
         }
         cleanup();
+    }
+
+    /**
+     * Echos the user input back to the user.
+     */
+    private static void echoUserInput(String userInput) {
+        showToUser(System.lineSeparator() + "[Command entered:" + userInput + "]");
     }
 
     /*
