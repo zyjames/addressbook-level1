@@ -613,8 +613,6 @@ public class AddressBook {
      */
     private static void updateLatestViewedPersonListing(List<String[]> newListing) {
         // clone to insulate from future changes to arg list
-        // lookup: defensive copying
-        //TODO: clean up above comment
         latestPersonListingView = new ArrayList<>(newListing);
     }
 
@@ -716,22 +714,14 @@ public class AddressBook {
      *
      * @param filePath file for saving
      */
-    private static void savePersonsToFile(Collection<String[]> persons, String filePath) {
-        try (final BufferedWriter storageWriter =
-                     new BufferedWriter(new FileWriter(filePath, false))) {
-            for (String[] person : persons) {
-                storageWriter.write(encodePersonToString(person));
-                storageWriter.newLine();
-            }
-            storageWriter.flush();
-        } catch (FileNotFoundException fnfe) {
-            showToUser(String.format(MESSAGE_ERROR_MISSING_STORAGE_FILE, filePath));
-            exitProgram();
+    private static void savePersonsToFile(List<String[]> persons, String filePath) {
+        final List<String> linesToWrite = encodePersonsToStrings(persons);
+        try {
+            Files.write(Paths.get(storageFilePath), linesToWrite);
         } catch (IOException ioe) {
             showToUser(String.format(MESSAGE_ERROR_WRITING_TO_FILE, filePath));
             exitProgram();
         }
-        //TODO: separate into two steps: 1. convert list to string 2. save string in file
     }
 
 
@@ -804,7 +794,7 @@ public class AddressBook {
     
     /*
      * ===========================================
-     *         SINGLE PERSON METHODS
+     *             PERSON METHODS
      * ===========================================
      */
 
@@ -859,6 +849,20 @@ public class AddressBook {
                 getNameFromPerson(person), getPhoneFromPerson(person), getEmailFromPerson(person));
     }
 
+    /**
+     * Encodes list of persons into list of decodable and readable string representations.
+     *
+     * @param persons to be encoded
+     * @return encoded strings
+     */
+    private static List<String> encodePersonsToStrings(List<String[]> persons) {
+        final List<String> encoded = new ArrayList<>();
+        for (String[] person : persons) {
+            encoded.add(encodePersonToString(person));
+        }
+        return encoded;
+    }
+
     /*
      * ==============NOTE TO STUDENTS======================================
      * Note the use of Java's new 'Optional' feature to indicate that
@@ -870,7 +874,7 @@ public class AddressBook {
      *
      * @param encoded string to be decoded
      * @return if cannot decode: empty Optional
-     *         else: Optional object containing decoded person
+     *         else: Optional containing decoded person
      */
     private static Optional<String[]> decodePersonFromString(String encoded) {
         // check that we can extract the parts of a person from the encoded string
@@ -884,6 +888,25 @@ public class AddressBook {
         );
         // check that the constructed person is valid
         return isPersonDataValid(decodedPerson) ? Optional.of(decodedPerson) : Optional.empty();
+    }
+
+    /**
+     * Decodes a person from it's supposed string representation.
+     *
+     * @param encodedPersons strings to be decoded
+     * @return if cannot decode any: empty Optional
+     *         else: Optional containing decoded persons
+     */
+    private static Optional<List<String[]>> decodePersonsFromStrings(List<String> encodedPersons) {
+        final List<String[]> decodedPersons = new ArrayList<>();
+        for (String encodedPerson : encodedPersons) {
+            final Optional<String[]> decodedPerson = decodePersonFromString(encodedPerson);
+            if (!decodedPerson.isPresent()) {
+                return Optional.empty();
+            }
+            decodedPersons.add(decodedPerson.get());
+        }
+        return Optional.of(decodedPersons);
     }
 
     /**
