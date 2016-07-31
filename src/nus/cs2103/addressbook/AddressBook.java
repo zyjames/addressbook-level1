@@ -165,8 +165,8 @@ public class AddressBook {
      * ====================================================================
      */
     public static void main(String[] args) {
+        showWelcomeMessage();
         processProgramArgs(args);
-        showToUser(MESSAGE_WELCOME);
         loadAddressBookModelFromStorage();
         while (!isExitRequested) {
             latestUserInput = getUserInput();
@@ -177,8 +177,26 @@ public class AddressBook {
         cleanup();
     }
 
+    /*
+     * ==============NOTE TO STUDENTS======================================
+     * The method header comment can be omitted if the method is trivial
+     * and the header comment is going to be almost identical to the method
+     * signature anyway.
+     * ====================================================================
+     */
+    private static void showWelcomeMessage() {
+        showToUser(MESSAGE_WELCOME);
+    }
+
+    /*
+     * ==============NOTE TO STUDENTS======================================
+     * Parameter description can be omitted from the method header comment
+     * if the parameter name is self-explanatory.
+     * In the method below, '@param userInput' comment has been omitted.
+     * ====================================================================
+     */
     /**
-     * Echos the user input back to the user.
+     * Echoes the user input back to the user.
      */
     private static void echoUserInput(String userInput) {
         showToUser(System.lineSeparator() + "[Command entered:" + userInput + "]");
