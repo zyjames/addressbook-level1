@@ -179,7 +179,7 @@ public class AddressBook {
         while (true) {
             userCommand = getUserInput();
             echoUserCommand(userCommand);
-            String feedback = parseAndExecuteCommand(userCommand);
+            String feedback = executeCommand(userCommand);
             showToUser(feedback);
         }
     }
@@ -314,7 +314,7 @@ public class AddressBook {
      * @param userInputString  raw input from user
      * @return  Message from respective function
      */
-    public static String parseAndExecuteCommand(String userInputString) {
+    public static String executeCommand(String userInputString) {
         final String[] commandTypeAndParams = splitCommandWordAndArgs(userInputString);
         final String commandType = commandTypeAndParams[0];
         final String commandArgs = commandTypeAndParams[1];
@@ -367,15 +367,15 @@ public class AddressBook {
      */
     private static String executeAddPerson(String commandArgs) {
         // try decoding a person from the raw args
-        final Optional<String[]> successfullyDecodedPerson = decodePersonFromStringRepresentation(commandArgs);
+        final Optional<String[]> person = decodePersonFromStringRepresentation(commandArgs);
 
         // checks if args are valid (cannot decode if invalid)
-        if (!successfullyDecodedPerson.isPresent()) {
+        if (!person.isPresent()) {
             return getMessageForInvalidCommandInput(getUsageInfoForAddCommand());
         }
 
         // add the person as specified
-        final String[] toAdd = successfullyDecodedPerson.get();
+        final String[] toAdd = person.get();
         addPersonToAddressBook(toAdd);
         return getMessageForSuccessfulAddPerson(toAdd);
     }
@@ -896,7 +896,8 @@ public class AddressBook {
         final int indexOfPhonePrefix = encoded.indexOf(PERSON_DATA_PREFIX_PHONE);
         final int indexOfEmailPrefix = encoded.indexOf(PERSON_DATA_PREFIX_EMAIL);
         // name is leading substring up to first data prefix symbol
-        return encoded.substring(0, Math.min(indexOfEmailPrefix, indexOfPhonePrefix)).trim();
+        int indexOfFirstPrefix = Math.min(indexOfEmailPrefix, indexOfPhonePrefix);
+        return encoded.substring(0, indexOfFirstPrefix).trim();
     }
 
     /**
@@ -917,6 +918,7 @@ public class AddressBook {
                 : removePrefixSign(
                 encoded.substring(indexOfPhonePrefix, indexOfEmailPrefix).trim(),
                 PERSON_DATA_PREFIX_PHONE);
+        //TODO: simplify. Ternary operator should be limited to very simple situations only
     }
 
     /**
@@ -937,6 +939,7 @@ public class AddressBook {
                 : removePrefixSign(
                 encoded.substring(indexOfEmailPrefix, indexOfPhonePrefix).trim(),
                 PERSON_DATA_PREFIX_EMAIL);
+        //TODO: simplify. Ternary operator should be limited to very simple situations only
     }
 
     /**
@@ -946,20 +949,9 @@ public class AddressBook {
      * @return whether the given person has valid data
      */
     private static boolean isPersonDataValid(String[] person) {
-        return isPersonDataValid(
-                person[PERSON_DATA_INDEX_NAME], person[PERSON_DATA_INDEX_PHONE], person[PERSON_DATA_INDEX_EMAIL]);
-    }
-
-    /**
-     * Validates individual data strings as legal person data fields
-     *
-     * @param name string to be checked as a person name
-     * @param phone string to be checked as a phone number (WITHOUT PREFIX)
-     * @param email string to be checked as an email (WITHOUT PREFIX)
-     * @return whether arguments are valid for their corresponding data field types
-     */
-    private static boolean isPersonDataValid(String name, String phone, String email) {
-        return isPersonNameValid(name) && isPersonPhoneValid(phone) && isPersonEmailValid(email);
+        return isPersonNameValid(person[PERSON_DATA_INDEX_NAME])
+                && isPersonPhoneValid(person[PERSON_DATA_INDEX_PHONE])
+                && isPersonEmailValid(person[PERSON_DATA_INDEX_EMAIL]);
     }
 
     /**
@@ -970,6 +962,7 @@ public class AddressBook {
      */
     private static boolean isPersonNameValid(String name) {
         return name.matches("(\\w|\\s)+");  // name is nonempty mixture of alphabets and whitespace
+        //TODO: implement a more permissive validation
     }
 
     /**
@@ -980,6 +973,7 @@ public class AddressBook {
      */
     private static boolean isPersonPhoneValid(String phone) {
         return phone.matches("\\d+");    // phone nonempty sequence of digits
+        //TODO: implement a more permissive validation
     }
 
     /**
@@ -990,6 +984,7 @@ public class AddressBook {
      */
     private static boolean isPersonEmailValid(String email) {
         return email.matches("\\S+@\\S+\\.\\S+"); // email is [non-whitespace]@[non-whitespace].[non-whitespace]
+        //TODO: implement a more permissive validation
     }
 
 
