@@ -172,7 +172,7 @@ public class AddressBook {
     public static void main(String[] args) {
         showWelcomeMessage();
         processProgramArgs(args);
-        loadAddressBookDataFromStorage();
+        loadDataFromStorage();
         while (!isExitRequested) {
             latestUserInput = getUserInput();
             echoUserInput(latestUserInput);
@@ -283,21 +283,12 @@ public class AddressBook {
     }
 
     /**
-     * Initialises the in-memory data using the storage file. If storage file does not exist, tries to create it first.
+     * Initialises the in-memory data using the storage file.
+     * Assumption: The file exists.
      */
-    private static void loadAddressBookDataFromStorage() {
-
-        if (!new File(storageFilePath).exists()) { // make sure storage file exists
-            indicateProgramShouldExit();
-            return;
-        }
-
-        final Optional<List<String[]>> successfullyLoadedPersons = loadPersonsFromFile(storageFilePath);
-        if (!successfullyLoadedPersons.isPresent()) { // make sure storage file decoded successfully
-            indicateProgramShouldExit();
-            return;
-        }
-        initialiseAddressBookData(successfullyLoadedPersons.get());
+    private static void loadDataFromStorage() {
+        ALL_PERSONS.clear();
+        ALL_PERSONS.addAll(loadPersonsFromFile(storageFilePath));
     }
 
     /**
@@ -673,36 +664,38 @@ public class AddressBook {
     }
 
     /**
-     * Converts contents of a file into a list of persons. Shows feedback to user.
+     * Converts contents of a file into a list of persons.
+     * Exits program if any errors in reading or decoding was encountered.
      *
      * @param filePath file to load from
-     * @return able to decode: optional containing list of persons in file
-     *         problems decoding: empty optional
+     * @return the list of decoded persons
      */
-    private static Optional<List<String[]>> loadPersonsFromFile(String filePath) {
-        try (final BufferedReader storageReader =
-                     new BufferedReader(new FileReader(filePath))) {
-            final List<String[]> decodedPersons = new ArrayList<>();
+    private static List<String[]> loadPersonsFromFile(String filePath) {
+        final List<String[]> decodedPersons = new ArrayList<>();
+        //TODO: separate file reading from decoding
+        try (final BufferedReader storageReader = new BufferedReader(new FileReader(filePath))) {
             int lineNumber = 1;
 
             // do for each line in the file, also tracks line number
             for (String line = storageReader.readLine(); line != null; line = storageReader.readLine(), lineNumber++) {
                 final Optional<String[]> successfullyDecodedPerson = decodePersonFromStringRepresentation(line);
+
                 // unable to decode person means file content format invalid; stop program
                 if (!successfullyDecodedPerson.isPresent()) {
                     showToUser(getMessageForInvalidPersonLineInFile(filePath, lineNumber, line));
-                    return Optional.empty();
+                    exitProgram();
                 }
+
                 decodedPersons.add(successfullyDecodedPerson.get());
             }
-            return Optional.of(decodedPersons); // success
-
         } catch (FileNotFoundException fnfe) {
             showToUser(String.format(MESSAGE_ERROR_MISSING_STORAGE_FILE, filePath));
+            exitProgram();
         } catch (IOException ioe) {
             showToUser(String.format(MESSAGE_ERROR_READING_FROM_FILE, filePath));
+            exitProgram();
         }
-        return Optional.empty(); // failure
+        return decodedPersons;
     }
 
     /**
@@ -796,16 +789,6 @@ public class AddressBook {
     private static void clearAddressBook() {
         ALL_PERSONS.clear();
         savePersonsToFile(getAllPersonsInAddressBook(), storageFilePath);
-    }
-
-    /**
-     * Resets the internal model with the given data. Does not save to file.
-     *
-     * @param persons list of persons to initialise the model with
-     */
-    private static void initialiseAddressBookData(List<String[]> persons) {
-        ALL_PERSONS.clear();
-        ALL_PERSONS.addAll(persons);
     }
 
     /*
