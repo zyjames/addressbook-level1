@@ -547,8 +547,8 @@ public class AddressBook {
     private static String getUserInput() {
         System.out.print(LS +"Enter command: ");
         String inputLine = SCANNER.nextLine();
-        // silently consume all comment lines
-        while (inputLine.trim().charAt(0) == INPUT_COMMENT_MARKER) {
+        // silently consume all blank and comment lines
+        while (inputLine.trim().isEmpty() || inputLine.trim().charAt(0) == INPUT_COMMENT_MARKER) {
             inputLine = SCANNER.nextLine();
         }
         return inputLine;
