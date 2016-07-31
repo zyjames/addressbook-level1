@@ -86,6 +86,16 @@ Enter command:exit
 then `Enter` to execute
 4. Command above will tell the program to save the data in `storageFilename.txt`, 
 then run the command provided from `../testing/input.txt`. Finally, it will write the output to `../testing/output.txt`
+
+Sample Windows batch file to automate testing:
+```sh
+javac  ..\src\nus\cs2103\addressbook\Addressbook.java -d ..\bin
+java -classpath ..\bin nus.cs2103.addressbook.AddressBook < input.txt > actual.txt
+FC actual.txt expected.txt
+```
+Put the code above into a file `test\test.bat`,
+open a DOS window in the `test` folder,
+and run the `call test.bat` command.
 # Exercises
 
 ### ABL1-E1: 
