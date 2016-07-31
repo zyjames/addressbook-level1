@@ -6,6 +6,8 @@ package nus.cs2103.addressbook;
  */
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 /* ==============NOTE TO STUDENTS======================================
@@ -664,20 +666,18 @@ public class AddressBook {
      */
     private static List<String[]> loadPersonsFromFile(String filePath) {
         final List<String[]> decodedPersons = new ArrayList<>();
-        //TODO: separate file reading from decoding
-        try (final BufferedReader storageReader = new BufferedReader(new FileReader(filePath))) {
-            int lineNumber = 1;
+        try {
+            final List<String> linesInFile = Files.readAllLines(Paths.get(filePath));
 
-            // do for each line in the file, also tracks line number
-            for (String line = storageReader.readLine(); line != null; line = storageReader.readLine(), lineNumber++) {
+            int lineNumber = 0;
+            for (String line : linesInFile) {
+                lineNumber++;
                 final Optional<String[]> successfullyDecodedPerson = decodePersonFromStringRepresentation(line);
-
                 // unable to decode person means file content format invalid; stop program
                 if (!successfullyDecodedPerson.isPresent()) {
                     showToUser(getMessageForInvalidPersonLineInFile(filePath, lineNumber, line));
                     exitProgram();
                 }
-
                 decodedPersons.add(successfullyDecodedPerson.get());
             }
         } catch (FileNotFoundException fnfe) {
