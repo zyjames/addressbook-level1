@@ -25,6 +25,11 @@ public class AddressBook {
      */
     public static final String DEFAULT_STORAGE_FILEPATH = "storage.txt";
 
+    /**
+     * A platform independent line separator.
+     */
+    public static final String LS = System.lineSeparator();
+
     /*
      * ==============NOTE TO STUDENTS======================================
      * These messages shown to the user are defined in one place for convenient
@@ -44,15 +49,15 @@ public class AddressBook {
     public static final String MESSAGE_DISPLAY_LIST_ELEMENT_INDEX = "%1$d. ";
     public static final String MESSAGE_EXITING = "Exiting Address Book...";
     private static final String MESSAGE_GOODBYE = "Good bye!";
-    public static final String MESSAGE_INVALID_COMMAND_FORMAT = "Invalid command format: %1$s \n%2$s";
+    public static final String MESSAGE_INVALID_COMMAND_FORMAT = "Invalid command format: %1$s " + LS + "%2$s";
     private static final String MESSAGE_INVALID_FILE = "The given file name [%1$s] is not a valid file name!";
     public static final String MESSAGE_INVALID_PROGRAM_ARGS = "Too many parameters! Correct program argument format:"
-                                                            + "\n\tjava AddressBook"
-                                                            + "\n\tjava AddressBook [custom storage file path]";
+                                                            + LS + "\tjava AddressBook"
+                                                            + LS + "\tjava AddressBook [custom storage file path]";
     public static final String MESSAGE_INVALID_PERSON_DISPLAYED_INDEX = "The person index provided is invalid";
     public static final String MESSAGE_INVALID_PERSON_LINE_IN_FILE = "Storage file contents invalid:"
-                                                                   + "\n\tFile: %1$s\tLine %2$d:"
-                                                                   + "\n\tNot a valid person:\t%3$s";
+                                                                   + LS + "\tFile: %1$s\tLine %2$d:"
+                                                                   + LS + "\tNot a valid person:\t%3$s";
     public static final String MESSAGE_PERSON_NOT_IN_ADDRESSBOOK = "Person could not be found in address book";
     public static final String MESSAGE_ERROR_CREATING_STORAGE_FILE = "Error: unable to create file: %1$s";
     public static final String MESSAGE_ERROR_MISSING_STORAGE_FILE = "Storage file missing: %1$s";
@@ -142,6 +147,7 @@ public class AddressBook {
      * List of all persons in the address book.
      */
     private static final List<String[]> ALL_PERSONS = new ArrayList<>();
+
 
     /**
      * Stores the most recent list of persons shown to the user as a result of a user command.
@@ -549,7 +555,7 @@ public class AddressBook {
      * @return full line entered by the user
      */
     private static String getUserInput() {
-        System.out.print("\nEnter command: ");
+        System.out.print(LS +"Enter command: ");
         String inputLine = SCANNER.nextLine();
         // silently consume all comment lines
         while (inputLine.trim().charAt(0) == INPUT_COMMENT_MARKER) {
@@ -578,7 +584,7 @@ public class AddressBook {
             final String[] person = persons.get(i);
             final int displayIndex = i + DISPLAYED_INDEX_OFFSET;
             messageAccumulator.append(getIndexedPersonListElementMessage(displayIndex, person))
-                              .append('\n');
+                              .append(LS);
         }
         showToUser(messageAccumulator.toString());
         updateLatestViewedPersonListing(persons);
@@ -1013,9 +1019,9 @@ public class AddressBook {
      * @return  'add' command usage instruction
      */
     private static String getUsageInfoForAddCommand() {
-        return String.format(MESSAGE_COMMAND_HELP, COMMAND_WORD_ADD, COMMAND_ADD_DESC) + '\n'
-                + String.format(MESSAGE_COMMAND_HELP_PARAMETERS, COMMAND_ADD_PARAMETERS) + '\n'
-                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_ADD_EXAMPLE) + '\n';
+        return String.format(MESSAGE_COMMAND_HELP, COMMAND_WORD_ADD, COMMAND_ADD_DESC) + LS
+                + String.format(MESSAGE_COMMAND_HELP_PARAMETERS, COMMAND_ADD_PARAMETERS) + LS
+                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_ADD_EXAMPLE) + LS;
     }
 
     /**
@@ -1024,9 +1030,9 @@ public class AddressBook {
      * @return  'find' command usage instruction
      */
     private static String getUsageInfoForFindCommand() {
-        return String.format(MESSAGE_COMMAND_HELP, COMMAND_WORD_FIND, COMMAND_FIND_DESC) + '\n'
-                + String.format(MESSAGE_COMMAND_HELP_PARAMETERS, COMMAND_FIND_PARAMETERS) + '\n'
-                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_FIND_EXAMPLE) + '\n';
+        return String.format(MESSAGE_COMMAND_HELP, COMMAND_WORD_FIND, COMMAND_FIND_DESC) + LS
+                + String.format(MESSAGE_COMMAND_HELP_PARAMETERS, COMMAND_FIND_PARAMETERS) + LS
+                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_FIND_EXAMPLE) + LS;
     }
 
     /**
@@ -1035,9 +1041,9 @@ public class AddressBook {
      * @return  'delete' command usage instruction
      */
     private static String getUsageInfoForDeleteCommand() {
-        return String.format(MESSAGE_COMMAND_HELP, COMMAND_WORD_DELETE, COMMAND_DELETE_DESC) + '\n'
-                + String.format(MESSAGE_COMMAND_HELP_PARAMETERS, COMMAND_DELETE_PARAMETER) + '\n'
-                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_DELETE_EXAMPLE) + '\n';
+        return String.format(MESSAGE_COMMAND_HELP, COMMAND_WORD_DELETE, COMMAND_DELETE_DESC) + LS
+                + String.format(MESSAGE_COMMAND_HELP_PARAMETERS, COMMAND_DELETE_PARAMETER) + LS
+                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_DELETE_EXAMPLE) + LS;
     }
 
     /**
@@ -1046,8 +1052,8 @@ public class AddressBook {
      * @return  'clear' command usage instruction
      */
     private static String getUsageInfoForClearCommand() {
-        return String.format(MESSAGE_COMMAND_HELP, COMMAND_WORD_CLEAR, COMMAND_CLEAR_DESC) + '\n'
-                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_CLEAR_EXAMPLE) + '\n';
+        return String.format(MESSAGE_COMMAND_HELP, COMMAND_WORD_CLEAR, COMMAND_CLEAR_DESC) + LS
+                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_CLEAR_EXAMPLE) + LS;
     }
 
     /**
@@ -1056,8 +1062,8 @@ public class AddressBook {
      * @return  'view' command usage instruction
      */
     private static String getUsageInfoForViewCommand() {
-        return String.format(MESSAGE_COMMAND_HELP, COMMAND_WORD_LIST, COMMAND_LIST_DESC) + '\n'
-                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_LIST_EXAMPLE) + '\n';
+        return String.format(MESSAGE_COMMAND_HELP, COMMAND_WORD_LIST, COMMAND_LIST_DESC) + LS
+                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_LIST_EXAMPLE) + LS;
     }
 
     /**
