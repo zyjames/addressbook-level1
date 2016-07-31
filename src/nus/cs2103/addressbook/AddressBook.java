@@ -284,9 +284,9 @@ public class AddressBook {
      * Assumption: The file exists.
      */
     private static void loadDataFromStorage() {
-        ALL_PERSONS.clear();
-        ALL_PERSONS.addAll(loadPersonsFromFile(storageFilePath));
+        initialiseAddressBookModel(loadPersonsFromFile(storageFilePath));
     }
+
 
     /*
      * ===========================================
@@ -353,7 +353,7 @@ public class AddressBook {
      */
     private static String executeAddPerson(String commandArgs) {
         // try decoding a person from the raw args
-        final Optional<String[]> decodeResult = decodePersonFromStringRepresentation(commandArgs);
+        final Optional<String[]> decodeResult = decodePersonFromString(commandArgs);
 
         // checks if args are valid (decode result will not be present if the person is invalid)
         if (!decodeResult.isPresent()) {
@@ -672,7 +672,7 @@ public class AddressBook {
             int lineNumber = 0;
             for (String line : linesInFile) {
                 lineNumber++;
-                final Optional<String[]> successfullyDecodedPerson = decodePersonFromStringRepresentation(line);
+                final Optional<String[]> successfullyDecodedPerson = decodePersonFromString(line);
                 // unable to decode person means file content format invalid; stop program
                 if (!successfullyDecodedPerson.isPresent()) {
                     showToUser(getMessageForInvalidPersonLineInFile(filePath, lineNumber, line));
@@ -713,7 +713,7 @@ public class AddressBook {
         try (final BufferedWriter storageWriter =
                      new BufferedWriter(new FileWriter(filePath, false))) {
             for (String[] person : persons) {
-                storageWriter.write(encodePersonToStringRepresentation(person));
+                storageWriter.write(encodePersonToString(person));
                 storageWriter.newLine();
             }
             storageWriter.flush();
@@ -784,6 +784,17 @@ public class AddressBook {
         savePersonsToFile(getAllPersonsInAddressBook(), storageFilePath);
     }
 
+    /**
+     * Resets the internal model with the given data. Does not save to file.
+     *
+     * @param persons list of persons to initialise the model with
+     */
+    private static void initialiseAddressBookModel(List<String[]> persons) {
+        ALL_PERSONS.clear();
+        ALL_PERSONS.addAll(persons);
+    }
+
+    
     /*
      * ===========================================
      *         SINGLE PERSON METHODS
@@ -836,7 +847,7 @@ public class AddressBook {
      * @param person to be encoded
      * @return encoded string
      */
-    private static String encodePersonToStringRepresentation(String[] person) {
+    private static String encodePersonToString(String[] person) {
         return String.format(PERSON_STRING_REPRESENTATION,
                 getNameFromPerson(person), getPhoneFromPerson(person), getEmailFromPerson(person));
     }
@@ -851,10 +862,10 @@ public class AddressBook {
      * Decodes a person from it's supposed string representation.
      *
      * @param encoded string to be decoded
-     * @return An Optional object containing person data, if decoding was possible.
-     *         An Optional.empty() otherwise.
+     * @return if cannot decode: empty Optional
+     *         else: Optional object containing decoded person
      */
-    private static Optional<String[]> decodePersonFromStringRepresentation(String encoded) {
+    private static Optional<String[]> decodePersonFromString(String encoded) {
         // check that we can extract the parts of a person from the encoded string
         if (!isPersonDataExtractableFrom(encoded)) {
             return Optional.empty();
