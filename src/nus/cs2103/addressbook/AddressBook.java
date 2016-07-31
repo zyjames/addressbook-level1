@@ -20,6 +20,11 @@ import java.util.*;
  **/
 public class AddressBook {
 
+    /**
+     * Default file path used if the user doesn't provide the file name.
+     */
+    public static final String DEFAULT_STORAGE_FILEPATH = "storage.txt";
+
     /*
      * ==============NOTE TO STUDENTS======================================
      * These messages shown to the user are defined in one place for convenient
@@ -38,8 +43,10 @@ public class AddressBook {
     public static final String MESSAGE_DISPLAY_PERSON_DATA = "%1$s  Phone Number: %2$s  Email: %3$s";
     public static final String MESSAGE_DISPLAY_LIST_ELEMENT_INDEX = "%1$d. ";
     public static final String MESSAGE_EXITING = "Exiting Address Book...";
+    private static final String MESSAGE_GOODBYE = "Good bye!";
     public static final String MESSAGE_INVALID_COMMAND_FORMAT = "Invalid command format: %1$s \n%2$s";
-    public static final String MESSAGE_INVALID_PROGRAM_ARGS = "Correct program argument format:"
+    private static final String MESSAGE_INVALID_FILE = "The given file name [%1$s] is not a valid file name!";
+    public static final String MESSAGE_INVALID_PROGRAM_ARGS = "Too many parameters! Correct program argument format:"
                                                             + "\n\tjava AddressBook"
                                                             + "\n\tjava AddressBook [custom storage file path]";
     public static final String MESSAGE_INVALID_PERSON_DISPLAYED_INDEX = "The person index provided is invalid";
@@ -54,6 +61,7 @@ public class AddressBook {
     public static final String MESSAGE_PERSONS_FOUND_OVERVIEW = "%1$d persons found!";
     public static final String MESSAGE_STORAGE_FILE_CREATED = "Created new empty storage file: %1$s";
     public static final String MESSAGE_WELCOME = "Welcome to your Address Book!";
+    public static final String MESSAGE_USING_DEFAULT_FILE = "Using default storage file : " + DEFAULT_STORAGE_FILEPATH;
 
     // These are the prefix strings to define the data type of a command parameter
     public static final String PERSON_DATA_PREFIX_PHONE = "p/";
@@ -115,10 +123,7 @@ public class AddressBook {
      */
     public static final int DISPLAYED_INDEX_OFFSET = 1;
 
-    /**
-     * Default file path used if the user doesn't provide the file name.
-     */
-	public static final String DEFAULT_STORAGE_FILEPATH = "storage.txt";
+
 
     /**
      * If the first non-whitespace character in a user's input line is this, that line will be ignored.
@@ -212,33 +217,75 @@ public class AddressBook {
 
     /**
      * Processes the program main method run arguments.
-     * Also handles parsing and validating the arguments.
-     * If any arguments are invalid, the corresponding default configuration is used.
+     * If a valid storage file is specified, sets up that file for storage.
+     * Otherwise sets up the default file for storage.
      * 
-     * @param args full program run arguments passed to application main method
+     * @param args full program arguments passed to application main method
      */
     private static void processProgramArgs(String[] args) {
-        informUserIfProgramArgsAreInvalid(args);
-        storageFilePath = args.length == 1 ? args[0] : DEFAULT_STORAGE_FILEPATH;
+        if (args.length > 1) {
+            showToUser(MESSAGE_INVALID_PROGRAM_ARGS);
+            exitProgram();
+        }
+
+        if(args.length == 0) {
+            setupDefaultFileForStorage();
+        }
+
+        if (args.length == 1) {
+            setupGivenFileForStorage(args[0]);
+        }
+
     }
 
     /**
-     * Informs user if program args are invalid.
-     *
-     * @param args full program run arguments passed to application main method
+     * Sets up the storage file based on the supplied file path.
+     * Creates the file if it is missing.
+     * Exits if the file name is not acceptable.
      */
-    private static void informUserIfProgramArgsAreInvalid(String[] args) {
-        if (args.length > 2) {
-            showToUser(MESSAGE_INVALID_PROGRAM_ARGS);
+    private static void setupGivenFileForStorage(String filePath) {
+        String userSuppliedFilePath = filePath;
+        if (isValidFilePath(userSuppliedFilePath)) {
+            storageFilePath = userSuppliedFilePath;
+            createFileIfMissing(userSuppliedFilePath);
+        } else {
+            showToUser(String.format(MESSAGE_INVALID_FILE, userSuppliedFilePath));
+            exitProgram();
         }
+    }
+
+    /**
+     * Displays the goodbye message exits the runtime.
+     */
+    private static void exitProgram() {
+        showToUser(MESSAGE_GOODBYE);
+        System.exit(0);
+    }
+
+    /**
+     * Sets up the storage based on the default file.
+     * Creates file if missing.
+     * Exits program if the file cannot be created.
+     */
+    private static void setupDefaultFileForStorage() {
+        showToUser(MESSAGE_USING_DEFAULT_FILE);
+        storageFilePath = DEFAULT_STORAGE_FILEPATH;
+        createFileIfMissing(storageFilePath);
+    }
+
+    /**
+     * Returns true if the given file is acceptable.
+     * The file path is acceptable if it ends in '.txt'
+     * TODO: Implement a more rigorous validity checking.
+     */
+    private static boolean isValidFilePath(String filePath) {
+        return filePath.endsWith(".txt");
     }
 
     /**
      * Initialises the in-memory data using the storage file. If storage file does not exist, tries to create it first.
      */
     private static void loadAddressBookDataFromStorage() {
-
-        tryToCreateFileIfMissing(storageFilePath);
 
         if (!new File(storageFilePath).exists()) { // make sure storage file exists
             indicateProgramShouldExit();
@@ -604,19 +651,24 @@ public class AddressBook {
      */
 
     /**
-     * Create storage file if it does not exist. Shows feedback to user.
+     * Creates storage file if it does not exist. Shows feedback to user.
      *
      * @param filePath file to create if not present
      */
-    private static void tryToCreateFileIfMissing(String filePath) {
+    private static void createFileIfMissing(String filePath) {
         final File storageFile = new File(filePath);
+        if (storageFile.exists()) {
+            return;
+        }
+
+        showToUser(String.format(MESSAGE_ERROR_MISSING_STORAGE_FILE, filePath));
+
         try {
-            if (storageFile.createNewFile()) {
-                showToUser(String.format(MESSAGE_ERROR_MISSING_STORAGE_FILE, filePath));
-                showToUser(String.format(MESSAGE_STORAGE_FILE_CREATED, filePath));
-            }
+            storageFile.createNewFile();
+            showToUser(String.format(MESSAGE_STORAGE_FILE_CREATED, filePath));
         } catch (IOException ioe) {
             showToUser(String.format(MESSAGE_ERROR_CREATING_STORAGE_FILE, filePath));
+            exitProgram();
         }
     }
 

@@ -1,4 +1,5 @@
 Welcome to your Address Book!
+Using default storage file : storage.txt
 
 Enter command: 
 [Command entered:sfdfd]
