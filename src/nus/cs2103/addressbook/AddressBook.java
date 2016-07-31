@@ -293,14 +293,6 @@ public class AddressBook {
         ALL_PERSONS.addAll(loadPersonsFromFile(storageFilePath));
     }
 
-    /**
-     * Cleans up all loose ends, and prepares program for termination.
-     */
-    private static void cleanup() {
-        // any checks, finalisations, cleanup logic, resource closing here.
-        // very useful when multithreading comes into play.
-    }
-
     /*
      * ===========================================
      *           COMMAND LOGIC
@@ -308,11 +300,10 @@ public class AddressBook {
      */
 
     /**
-     * Checks which command the user want to trigger, then run the corresponding
-     * function
+     * Checks which command the user want to trigger, then run the corresponding function
      * 
      * @param userInputString  raw input from user
-     * @return  Message from respective function
+     * @return  feedback about how the command was executed
      */
     public static String executeCommand(String userInputString) {
         final String[] commandTypeAndParams = splitCommandWordAndArgs(userInputString);
@@ -367,17 +358,17 @@ public class AddressBook {
      */
     private static String executeAddPerson(String commandArgs) {
         // try decoding a person from the raw args
-        final Optional<String[]> person = decodePersonFromStringRepresentation(commandArgs);
+        final Optional<String[]> decodeResult = decodePersonFromStringRepresentation(commandArgs);
 
-        // checks if args are valid (cannot decode if invalid)
-        if (!person.isPresent()) {
+        // checks if args are valid (decode result will not be present if the person is invalid)
+        if (!decodeResult.isPresent()) {
             return getMessageForInvalidCommandInput(getUsageInfoForAddCommand());
         }
 
         // add the person as specified
-        final String[] toAdd = person.get();
-        addPersonToAddressBook(toAdd);
-        return getMessageForSuccessfulAddPerson(toAdd);
+        final String[] personToAdd = decodeResult.get();
+        addPersonToAddressBook(personToAdd);
+        return getMessageForSuccessfulAddPerson(personToAdd);
     }
 
     /**
@@ -561,19 +552,26 @@ public class AddressBook {
 
     /**
      * Shows a message to the user
-     *
-     * @param message to show
      */
     private static void showToUser(String message) {
         System.out.println(message);
     }
 
     /**
-     * Formats and shows an indexed list of persons to the user.
+     * Shows the list of persons to the user.
+     * The list will be indexed, starting from 1.
      *
-     * @param persons to show
      */
     private static void showToUser(List<String[]> persons) {
+        String listAsString = getDisplayString(persons);
+        showToUser(listAsString);
+        updateLatestViewedPersonListing(persons);
+    }
+
+    /**
+     * Returns the display string representation of the list of persons.
+     */
+    private static String getDisplayString(List<String[]> persons) {
         final StringBuilder messageAccumulator = new StringBuilder();
         for (int i = 0; i < persons.size(); i++) {
             final String[] person = persons.get(i);
@@ -581,12 +579,11 @@ public class AddressBook {
             messageAccumulator.append(getIndexedPersonListElementMessage(displayIndex, person))
                               .append(LS);
         }
-        showToUser(messageAccumulator.toString());
-        updateLatestViewedPersonListing(persons);
+        return messageAccumulator.toString();
     }
 
     /**
-     * Construct a prettified listing element message to represent a person and their data.
+     * Constructs a prettified listing element message to represent a person and their data.
      *
      * @param visibleIndex visible index for this listing
      * @param person to show
@@ -597,7 +594,7 @@ public class AddressBook {
     }
 
     /**
-     * Construct a prettified string to show the user a person's data.
+     * Constructs a prettified string to show the user a person's data.
      *
      * @param person to show
      * @return formatted message showing internal state
@@ -608,18 +605,19 @@ public class AddressBook {
     }
 
     /**
-     * Track the latest person listing view the user has seen.
+     * Updates the latest person listing view the user has seen.
      *
      * @param newListing the new listing of persons
      */
     private static void updateLatestViewedPersonListing(List<String[]> newListing) {
         // clone to insulate from future changes to arg list
         // lookup: defensive copying
+        //TODO: clean up above comment
         latestPersonListingView = new ArrayList<>(newListing);
     }
 
     /**
-     * Retrieve the person identified by the displayed index from the last shown listing of persons.
+     * Retrieves the person identified by the displayed index from the last shown listing of persons.
      *
      * @param lastVisibleIndex displayed index from last shown person listing
      * @return the actual person object in the last shown person listing
