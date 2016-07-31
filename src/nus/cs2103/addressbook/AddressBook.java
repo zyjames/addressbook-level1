@@ -47,8 +47,7 @@ public class AddressBook {
     public static final String MESSAGE_DELETE_PERSON_SUCCESS = "Deleted Person: %1$s";
     public static final String MESSAGE_DISPLAY_PERSON_DATA = "%1$s  Phone Number: %2$s  Email: %3$s";
     public static final String MESSAGE_DISPLAY_LIST_ELEMENT_INDEX = "%1$d. ";
-    public static final String MESSAGE_EXITING = "Exiting Address Book...";
-    private static final String MESSAGE_GOODBYE = "Good bye!";
+    private static final String MESSAGE_GOODBYE = "Exiting Address Book... Good bye!";
     public static final String MESSAGE_INVALID_COMMAND_FORMAT = "Invalid command format: %1$s " + LS + "%2$s";
     private static final String MESSAGE_INVALID_FILE = "The given file name [%1$s] is not a valid file name!";
     public static final String MESSAGE_INVALID_PROGRAM_ARGS = "Too many parameters! Correct program argument format:"
@@ -166,8 +165,6 @@ public class AddressBook {
      */
     private static String storageFilePath;
 
-    private static boolean isExitRequested = false;
-
     /*
      * ==============NOTE TO STUDENTS======================================
      * Notice how this method solves the whole problem at a very high level.
@@ -179,13 +176,12 @@ public class AddressBook {
         showWelcomeMessage();
         processProgramArgs(args);
         loadDataFromStorage();
-        while (!isExitRequested) {
+        while (true) {
             userCommand = getUserInput();
             echoUserCommand(userCommand);
             String feedback = parseAndExecuteCommand(userCommand);
             showToUser(feedback);
         }
-        cleanup();
     }
 
     /*
@@ -336,7 +332,7 @@ public class AddressBook {
         case COMMAND_WORD_HELP:
             return getUsageInfoForAllCommands();
         case COMMAND_WORD_EXIT:
-            return executeExitProgramRequest();
+            executeExitProgramRequest();
         default:
             return getMessageForInvalidCommandInput(getUsageInfoForAllCommands());
         }
@@ -537,9 +533,8 @@ public class AddressBook {
      *
      * @return feedback display message for the operation result
      */
-    private static String executeExitProgramRequest() {
-        indicateProgramShouldExit();
-        return MESSAGE_EXITING;
+    private static void executeExitProgramRequest() {
+        exitProgram();
     }
 
     /*
@@ -733,10 +728,10 @@ public class AddressBook {
             storageWriter.flush();
         } catch (FileNotFoundException fnfe) {
             showToUser(String.format(MESSAGE_ERROR_MISSING_STORAGE_FILE, filePath));
-            indicateProgramShouldExit();
+            exitProgram();
         } catch (IOException ioe) {
             showToUser(String.format(MESSAGE_ERROR_WRITING_TO_FILE, filePath));
-            indicateProgramShouldExit();
+            exitProgram();
         }
     }
 
@@ -1113,13 +1108,6 @@ public class AddressBook {
      */
     private static List<String> splitByWhitespace(String toSplit) {
         return Arrays.asList(toSplit.trim().split("\\s+"));
-    }
-
-    /**
-     * Program will clean up and exit as soon as possible.
-     */
-    private static void indicateProgramShouldExit() {
-        isExitRequested = true;
     }
 
 }

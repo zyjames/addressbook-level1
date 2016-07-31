@@ -179,4 +179,4 @@ Enter command:
 
 Enter command: 
 [Command entered:exit]
-Exiting Address Book...
+Exiting Address Book... Good bye!
