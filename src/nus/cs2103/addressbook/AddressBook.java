@@ -894,7 +894,7 @@ public class AddressBook {
     }
 
     /**
-     * Decodes a person from it's supposed string representation.
+     * Decode persons from a list of string representations.
      *
      * @param encodedPersons strings to be decoded
      * @return if cannot decode any: empty Optional
