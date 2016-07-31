@@ -136,6 +136,14 @@ public class AddressBook {
      */
     private static final char INPUT_COMMENT_MARKER = '#';
 
+    /*
+     * This variable is declared for the whole class (instead of declaring it
+     * inside the readUserCommand() method to facilitate automated testing using
+     * the I/O redirection technique. If not, only the first line of the input
+     * text file will be processed.
+     */
+    private static final Scanner SCANNER = new Scanner(System.in);
+
     /**
      * List of all persons in the address book.
      */
@@ -170,9 +178,8 @@ public class AddressBook {
         showWelcomeMessage();
         processProgramArgs(args);
         loadDataFromStorage();
-        final Scanner inputScanner = new Scanner(System.in);
         while (true) {
-            userCommand = getUserInput(inputScanner);
+            userCommand = getUserInput();
             echoUserCommand(userCommand);
             String feedback = executeCommand(userCommand);
             showToUser(feedback);
@@ -535,12 +542,12 @@ public class AddressBook {
      *
      * @return full line entered by the user
      */
-    private static String getUserInput(Scanner inputScanner) {
+    private static String getUserInput() {
         System.out.print(LS +"Enter command: ");
-        String inputLine = inputScanner.nextLine();
+        String inputLine = SCANNER.nextLine();
         // silently consume all comment lines
         while (inputLine.trim().charAt(0) == INPUT_COMMENT_MARKER) {
-            inputLine = inputScanner.nextLine();
+            inputLine = SCANNER.nextLine();
         }
         return inputLine;
     }
