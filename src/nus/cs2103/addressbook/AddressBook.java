@@ -23,12 +23,12 @@ public class AddressBook {
     /**
      * Default file path used if the user doesn't provide the file name.
      */
-    public static final String DEFAULT_STORAGE_FILEPATH = "storage.txt";
+    private static final String DEFAULT_STORAGE_FILEPATH = "storage.txt";
 
     /**
      * A platform independent line separator.
      */
-    public static final String LS = System.lineSeparator();
+    private static final String LS = System.lineSeparator();
 
     /*
      * ==============NOTE TO STUDENTS======================================
@@ -39,73 +39,73 @@ public class AddressBook {
      * at which java String.format(...) method can insert values.
      * ====================================================================
      */
-    public static final String MESSAGE_ADDED = "New person added: %1$s, Phone: %2$s, Email: %3$s";
-    public static final String MESSAGE_ADDRESSBOOK_CLEARED = "Address book has been cleared!";
-    public static final String MESSAGE_COMMAND_HELP = "%1$s: %2$s";
-    public static final String MESSAGE_COMMAND_HELP_PARAMETERS = "\tParameters: %1$s";
-    public static final String MESSAGE_COMMAND_HELP_EXAMPLE = "\tExample: %1$s";
-    public static final String MESSAGE_DELETE_PERSON_SUCCESS = "Deleted Person: %1$s";
-    public static final String MESSAGE_DISPLAY_PERSON_DATA = "%1$s  Phone Number: %2$s  Email: %3$s";
-    public static final String MESSAGE_DISPLAY_LIST_ELEMENT_INDEX = "%1$d. ";
+    private static final String MESSAGE_ADDED = "New person added: %1$s, Phone: %2$s, Email: %3$s";
+    private static final String MESSAGE_ADDRESSBOOK_CLEARED = "Address book has been cleared!";
+    private static final String MESSAGE_COMMAND_HELP = "%1$s: %2$s";
+    private static final String MESSAGE_COMMAND_HELP_PARAMETERS = "\tParameters: %1$s";
+    private static final String MESSAGE_COMMAND_HELP_EXAMPLE = "\tExample: %1$s";
+    private static final String MESSAGE_DELETE_PERSON_SUCCESS = "Deleted Person: %1$s";
+    private static final String MESSAGE_DISPLAY_PERSON_DATA = "%1$s  Phone Number: %2$s  Email: %3$s";
+    private static final String MESSAGE_DISPLAY_LIST_ELEMENT_INDEX = "%1$d. ";
     private static final String MESSAGE_GOODBYE = "Exiting Address Book... Good bye!";
-    public static final String MESSAGE_INVALID_COMMAND_FORMAT = "Invalid command format: %1$s " + LS + "%2$s";
+    private static final String MESSAGE_INVALID_COMMAND_FORMAT = "Invalid command format: %1$s " + LS + "%2$s";
     private static final String MESSAGE_INVALID_FILE = "The given file name [%1$s] is not a valid file name!";
-    public static final String MESSAGE_INVALID_PROGRAM_ARGS = "Too many parameters! Correct program argument format:"
+    private static final String MESSAGE_INVALID_PROGRAM_ARGS = "Too many parameters! Correct program argument format:"
                                                             + LS + "\tjava AddressBook"
                                                             + LS + "\tjava AddressBook [custom storage file path]";
-    public static final String MESSAGE_INVALID_PERSON_DISPLAYED_INDEX = "The person index provided is invalid";
-    public static final String MESSAGE_INVALID_PERSON_LINE_IN_FILE = "Storage file contents invalid:"
+    private static final String MESSAGE_INVALID_PERSON_DISPLAYED_INDEX = "The person index provided is invalid";
+    private static final String MESSAGE_INVALID_PERSON_LINE_IN_FILE = "Storage file contents invalid:"
                                                                    + LS + "\tFile: %1$s\tLine %2$d:"
                                                                    + LS + "\tNot a valid person:\t%3$s";
-    public static final String MESSAGE_PERSON_NOT_IN_ADDRESSBOOK = "Person could not be found in address book";
-    public static final String MESSAGE_ERROR_CREATING_STORAGE_FILE = "Error: unable to create file: %1$s";
-    public static final String MESSAGE_ERROR_MISSING_STORAGE_FILE = "Storage file missing: %1$s";
-    public static final String MESSAGE_ERROR_READING_FROM_FILE = "Unexpected error: unable to read from file: %1$s";
-    public static final String MESSAGE_ERROR_WRITING_TO_FILE = "Unexpected error: unable to write to file: %1$s";
-    public static final String MESSAGE_PERSONS_FOUND_OVERVIEW = "%1$d persons found!";
-    public static final String MESSAGE_STORAGE_FILE_CREATED = "Created new empty storage file: %1$s";
-    public static final String MESSAGE_WELCOME = "Welcome to your Address Book!";
-    public static final String MESSAGE_USING_DEFAULT_FILE = "Using default storage file : " + DEFAULT_STORAGE_FILEPATH;
+    private static final String MESSAGE_PERSON_NOT_IN_ADDRESSBOOK = "Person could not be found in address book";
+    private static final String MESSAGE_ERROR_CREATING_STORAGE_FILE = "Error: unable to create file: %1$s";
+    private static final String MESSAGE_ERROR_MISSING_STORAGE_FILE = "Storage file missing: %1$s";
+    private static final String MESSAGE_ERROR_READING_FROM_FILE = "Unexpected error: unable to read from file: %1$s";
+    private static final String MESSAGE_ERROR_WRITING_TO_FILE = "Unexpected error: unable to write to file: %1$s";
+    private static final String MESSAGE_PERSONS_FOUND_OVERVIEW = "%1$d persons found!";
+    private static final String MESSAGE_STORAGE_FILE_CREATED = "Created new empty storage file: %1$s";
+    private static final String MESSAGE_WELCOME = "Welcome to your Address Book!";
+    private static final String MESSAGE_USING_DEFAULT_FILE = "Using default storage file : " + DEFAULT_STORAGE_FILEPATH;
 
     // These are the prefix strings to define the data type of a command parameter
-    public static final String PERSON_DATA_PREFIX_PHONE = "p/";
-    public static final String PERSON_DATA_PREFIX_EMAIL = "e/";
+    private static final String PERSON_DATA_PREFIX_PHONE = "p/";
+    private static final String PERSON_DATA_PREFIX_EMAIL = "e/";
 
-    public static final String PERSON_STRING_REPRESENTATION = "%1$s " // name
+    private static final String PERSON_STRING_REPRESENTATION = "%1$s " // name
                                                             + PERSON_DATA_PREFIX_PHONE + "%2$s " // phone
                                                             + PERSON_DATA_PREFIX_EMAIL + "%3$s"; // email
-    public static final String COMMAND_WORD_ADD = "add";
-    public static final String COMMAND_ADD_DESC = "Adds a person to the address book.";
-    public static final String COMMAND_ADD_PARAMETERS = "[name] "
+    private static final String COMMAND_WORD_ADD = "add";
+    private static final String COMMAND_ADD_DESC = "Adds a person to the address book.";
+    private static final String COMMAND_ADD_PARAMETERS = "[name] "
                                                       + PERSON_DATA_PREFIX_PHONE + "[phone number] "
                                                       + PERSON_DATA_PREFIX_EMAIL + "[email]";
-    public static final String COMMAND_ADD_EXAMPLE = COMMAND_WORD_ADD + " John Doe p/98765432 e/johnd@gmail.com";
+    private static final String COMMAND_ADD_EXAMPLE = COMMAND_WORD_ADD + " John Doe p/98765432 e/johnd@gmail.com";
 
-    public static final String COMMAND_WORD_FIND = "find";
-    public static final String COMMAND_FIND_DESC = "Retrieve persons with names containing the keyword.";
-    public static final String COMMAND_FIND_PARAMETERS = "[keyword 1], [keyword 2], ...";
-    public static final String COMMAND_FIND_EXAMPLE = COMMAND_WORD_FIND + " alice bob charlie";
+    private static final String COMMAND_WORD_FIND = "find";
+    private static final String COMMAND_FIND_DESC = "Retrieve persons with names containing the keyword.";
+    private static final String COMMAND_FIND_PARAMETERS = "[keyword 1], [keyword 2], ...";
+    private static final String COMMAND_FIND_EXAMPLE = COMMAND_WORD_FIND + " alice bob charlie";
 
-    public static final String COMMAND_WORD_LIST = "list";
-    public static final String COMMAND_LIST_DESC = "Lists all persons in added order.";
-    public static final String COMMAND_LIST_EXAMPLE = COMMAND_WORD_LIST;
+    private static final String COMMAND_WORD_LIST = "list";
+    private static final String COMMAND_LIST_DESC = "Lists all persons in added order.";
+    private static final String COMMAND_LIST_EXAMPLE = COMMAND_WORD_LIST;
 
-    public static final String COMMAND_WORD_DELETE = "delete";
-    public static final String COMMAND_DELETE_DESC = "Delete the person identified by the given index number.";
-    public static final String COMMAND_DELETE_PARAMETER = "[target index number]";
-    public static final String COMMAND_DELETE_EXAMPLE = COMMAND_WORD_DELETE + " 1";
+    private static final String COMMAND_WORD_DELETE = "delete";
+    private static final String COMMAND_DELETE_DESC = "Delete the person identified by the given index number.";
+    private static final String COMMAND_DELETE_PARAMETER = "[target index number]";
+    private static final String COMMAND_DELETE_EXAMPLE = COMMAND_WORD_DELETE + " 1";
 
-    public static final String COMMAND_WORD_CLEAR = "clear";
-    public static final String COMMAND_CLEAR_DESC = "Clears address book permanently.";
-    public static final String COMMAND_CLEAR_EXAMPLE = COMMAND_WORD_CLEAR;
+    private static final String COMMAND_WORD_CLEAR = "clear";
+    private static final String COMMAND_CLEAR_DESC = "Clears address book permanently.";
+    private static final String COMMAND_CLEAR_EXAMPLE = COMMAND_WORD_CLEAR;
 
-    public static final String COMMAND_WORD_HELP = "help";
-    public static final String COMMAND_HELP_DESC = "Shows program usage instructions.";
-    public static final String COMMAND_HELP_EXAMPLE = COMMAND_WORD_HELP;
+    private static final String COMMAND_WORD_HELP = "help";
+    private static final String COMMAND_HELP_DESC = "Shows program usage instructions.";
+    private static final String COMMAND_HELP_EXAMPLE = COMMAND_WORD_HELP;
 
-    public static final String COMMAND_WORD_EXIT = "exit";
-    public static final String COMMAND_EXIT_DESC = "Exit the program.";
-    public static final String COMMAND_EXIT_EXAMPLE = COMMAND_WORD_EXIT;
+    private static final String COMMAND_WORD_EXIT = "exit";
+    private static final String COMMAND_EXIT_DESC = "Exit the program.";
+    private static final String COMMAND_EXIT_EXAMPLE = COMMAND_WORD_EXIT;
 
 
     /* We use a String array to store details of a single person.
@@ -113,26 +113,26 @@ public class AddressBook {
      * used by the internal String[] storage format.
      * For example, a person's name is stored as the 0th element in the array.
      */
-    public static final int PERSON_DATA_INDEX_NAME = 0;
-    public static final int PERSON_DATA_INDEX_PHONE = 1;
-    public static final int PERSON_DATA_INDEX_EMAIL = 2;
+    private static final int PERSON_DATA_INDEX_NAME = 0;
+    private static final int PERSON_DATA_INDEX_PHONE = 1;
+    private static final int PERSON_DATA_INDEX_EMAIL = 2;
 
     /**
      * The number of data elements for a single person.
      */
-    public static final int PERSON_DATA_COUNT = 3;
+    private static final int PERSON_DATA_COUNT = 3;
 
     /**
      * Offset required to convert between 1-indexing and 0-indexing.COMMAND_
      */
-    public static final int DISPLAYED_INDEX_OFFSET = 1;
+    private static final int DISPLAYED_INDEX_OFFSET = 1;
 
 
 
     /**
      * If the first non-whitespace character in a user's input line is this, that line will be ignored.
      */
-    public static final char INPUT_COMMENT_MARKER = '#';
+    private static final char INPUT_COMMENT_MARKER = '#';
 
     /*
      * This variable is declared for the whole class (instead of declaring it
@@ -711,8 +711,8 @@ public class AddressBook {
     }
 
     /**
-     * Saves
-     * NOTE: will try to terminate program if there is an error saving to file.
+     * Saves all data to the file.
+     * Exits program if there is an error saving to file.
      *
      * @param filePath file for saving
      */
@@ -731,12 +731,13 @@ public class AddressBook {
             showToUser(String.format(MESSAGE_ERROR_WRITING_TO_FILE, filePath));
             exitProgram();
         }
+        //TODO: separate into two steps: 1. convert list to string 2. save string in file
     }
 
 
     /*
      * ================================================================================
-     *        INTERNAL ADDRESS BOOK MODEL METHODS (Changes to model must use these)
+     *        INTERNAL ADDRESS BOOK DATA METHODS
      * ================================================================================
      */
 
@@ -762,9 +763,9 @@ public class AddressBook {
     }
 
     /**
-     * Deletes the person in the argument from the addressbook if it is inside. Saves any changes to storage file.
+     * Deletes the specified person from the addressbook if it is inside. Saves any changes to storage file.
      *
-     * @param exactPerson the actual person inside the model (exactPerson == the person to delete in the full list)
+     * @param exactPerson the actual person inside the address book (exactPerson == the person to delete in the full list)
      * @return true if the given person was found and deleted in the model
      */
     private static boolean deletePersonFromAddressBook(String[] exactPerson) {
@@ -847,12 +848,18 @@ public class AddressBook {
                 getNameFromPerson(person), getPhoneFromPerson(person), getEmailFromPerson(person));
     }
 
+    /*
+     * ==============NOTE TO STUDENTS======================================
+     * Note the use of Java's new 'Optional' feature to indicate that
+     * the return value may not always be present.
+     * ====================================================================
+     */
     /**
-     * Validates and decodes a person from it's supposed string representation.
+     * Decodes a person from it's supposed string representation.
      *
      * @param encoded string to be decoded
-     * @return able to decode: optional containing decoded person
-     *         unable to decode: empty optional
+     * @return An Optional object containing person data, if decoding was possible.
+     *         An Optional.empty() otherwise.
      */
     private static Optional<String[]> decodePersonFromStringRepresentation(String encoded) {
         // check that we can extract the parts of a person from the encoded string
@@ -952,6 +959,13 @@ public class AddressBook {
                 && isPersonEmailValid(person[PERSON_DATA_INDEX_EMAIL]);
     }
 
+    /*
+     * ==============NOTE TO STUDENTS======================================
+     * Note the use of 'regular expressions' in the method below.
+     * Regular expressions can be very useful in checking if a a string
+     * follows a sepcific format.
+     * ====================================================================
+     */
     /**
      * Validates string as a legal person name
      *
@@ -1077,7 +1091,7 @@ public class AddressBook {
 
     /*
      * ============================
-     *         UTILITY
+     *         UTILITY METHODS
      * ============================
      */
 
