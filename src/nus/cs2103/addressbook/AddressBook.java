@@ -167,7 +167,7 @@ public class AddressBook {
     public static void main(String[] args) {
         showWelcomeMessage();
         processProgramArgs(args);
-        loadAddressBookModelFromStorage();
+        loadAddressBookDataFromStorage();
         while (!isExitRequested) {
             latestUserInput = getUserInput();
             echoUserInput(latestUserInput);
@@ -234,10 +234,12 @@ public class AddressBook {
     }
 
     /**
-     * Initialises the model using the storage file. If storage file does not exist, tries to create it first.
+     * Initialises the in-memory data using the storage file. If storage file does not exist, tries to create it first.
      */
-    private static void loadAddressBookModelFromStorage() {
+    private static void loadAddressBookDataFromStorage() {
+
         tryToCreateFileIfMissing(storageFilePath);
+
         if (!new File(storageFilePath).exists()) { // make sure storage file exists
             indicateProgramShouldExit();
             return;
@@ -248,7 +250,7 @@ public class AddressBook {
             indicateProgramShouldExit();
             return;
         }
-        initialiseAddressBookModel(successfullyLoadedPersons.get());
+        initialiseAddressBookData(successfullyLoadedPersons.get());
     }
 
     /**
@@ -749,7 +751,7 @@ public class AddressBook {
      *
      * @param persons list of persons to initialise the model with
      */
-    private static void initialiseAddressBookModel(List<String[]> persons) {
+    private static void initialiseAddressBookData(List<String[]> persons) {
         ALL_PERSONS.clear();
         ALL_PERSONS.addAll(persons);
     }
@@ -785,7 +787,7 @@ public class AddressBook {
     }
 
     /**
-     * Create a person for use in the internal model.
+     * Create a person for use in the internal data.
      *
      * @param name of person
      * @param phone without data prefix
@@ -904,7 +906,7 @@ public class AddressBook {
     /**
      * Validates a person's data fields
      *
-     * @param person String array representing the person (used in internal model)
+     * @param person String array representing the person (used in internal data)
      * @return whether the given person has valid data
      */
     private static boolean isPersonDataValid(String[] person) {
