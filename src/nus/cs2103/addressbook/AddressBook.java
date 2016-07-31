@@ -208,7 +208,7 @@ public class AddressBook {
      * Echoes the user input back to the user.
      */
     private static void echoUserCommand(String userCommand) {
-        showToUser(System.lineSeparator() + "[Command entered:" + userCommand + "]");
+        showToUser(LS + "[Command entered:" + userCommand + "]");
     }
 
     /*
@@ -948,16 +948,18 @@ public class AddressBook {
     private static String extractPhoneFromPersonString(String encoded) {
         final int indexOfPhonePrefix = encoded.indexOf(PERSON_DATA_PREFIX_PHONE);
         final int indexOfEmailPrefix = encoded.indexOf(PERSON_DATA_PREFIX_EMAIL);
-        return indexOfPhonePrefix > indexOfEmailPrefix
-                // phone is last arg, target is from prefix to end of string
-                ? removePrefixSign(
-                encoded.substring(indexOfPhonePrefix, encoded.length()).trim(),
-                PERSON_DATA_PREFIX_PHONE)
-                // phone is middle arg, target is from own prefix to next prefix
-                : removePrefixSign(
-                encoded.substring(indexOfPhonePrefix, indexOfEmailPrefix).trim(),
-                PERSON_DATA_PREFIX_PHONE);
-        //TODO: simplify. Ternary operator should be limited to very simple situations only
+
+        // phone is last arg, target is from prefix to end of string
+        if (indexOfPhonePrefix > indexOfEmailPrefix) {
+            return removePrefixSign(encoded.substring(indexOfPhonePrefix, encoded.length()).trim(),
+                    PERSON_DATA_PREFIX_PHONE);
+
+        // phone is middle arg, target is from own prefix to next prefix
+        } else {
+            return removePrefixSign(
+                    encoded.substring(indexOfPhonePrefix, indexOfEmailPrefix).trim(),
+                    PERSON_DATA_PREFIX_PHONE);
+        }
     }
 
     /**
@@ -969,16 +971,18 @@ public class AddressBook {
     private static String extractEmailFromPersonString(String encoded) {
         final int indexOfPhonePrefix = encoded.indexOf(PERSON_DATA_PREFIX_PHONE);
         final int indexOfEmailPrefix = encoded.indexOf(PERSON_DATA_PREFIX_EMAIL);
-        return indexOfEmailPrefix > indexOfPhonePrefix
-                // email is last arg, target is from prefix to end of string
-                ? removePrefixSign(
-                encoded.substring(indexOfEmailPrefix, encoded.length()).trim(),
-                PERSON_DATA_PREFIX_EMAIL)
-                // email is middle arg, target is from own prefix to next prefix
-                : removePrefixSign(
-                encoded.substring(indexOfEmailPrefix, indexOfPhonePrefix).trim(),
-                PERSON_DATA_PREFIX_EMAIL);
-        //TODO: simplify. Ternary operator should be limited to very simple situations only
+
+        // email is last arg, target is from prefix to end of string
+        if (indexOfEmailPrefix > indexOfPhonePrefix) {
+            return removePrefixSign(encoded.substring(indexOfEmailPrefix, encoded.length()).trim(),
+                    PERSON_DATA_PREFIX_EMAIL);
+
+        // email is middle arg, target is from own prefix to next prefix
+        } else {
+            return removePrefixSign(
+                    encoded.substring(indexOfEmailPrefix, indexOfPhonePrefix).trim(),
+                    PERSON_DATA_PREFIX_EMAIL);
+        }
     }
 
     /**
