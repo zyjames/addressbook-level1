@@ -580,7 +580,8 @@ public class AddressBook {
         for (int i = 0; i < persons.size(); i++) {
             final String[] person = persons.get(i);
             final int displayIndex = i + DISPLAYED_INDEX_OFFSET;
-            messageAccumulator.append(getIndexedPersonListElementMessage(displayIndex, person))
+            messageAccumulator.append('\t')
+                              .append(getIndexedPersonListElementMessage(displayIndex, person))
                               .append(LS);
         }
         return messageAccumulator.toString();
@@ -1050,8 +1051,12 @@ public class AddressBook {
      * @return  Usage info for all commands
      */
     private static String getUsageInfoForAllCommands() {
-        return getUsageInfoForAddCommand() + getUsageInfoForFindCommand() + getUsageInfoForViewCommand()
-                + getUsageInfoForDeleteCommand() + getUsageInfoForClearCommand() + getUsageInfoForExitCommand()
+        return getUsageInfoForAddCommand() + LS
+                + getUsageInfoForFindCommand() + LS
+                + getUsageInfoForViewCommand() + LS
+                + getUsageInfoForDeleteCommand() + LS
+                + getUsageInfoForClearCommand() + LS
+                + getUsageInfoForExitCommand() + LS
                 + getUsageInfoForHelpCommand();
     }
 
