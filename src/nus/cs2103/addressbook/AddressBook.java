@@ -246,18 +246,18 @@ public class AddressBook {
      * Exits if the file name is not acceptable.
      */
     private static void setupGivenFileForStorage(String filePath) {
-        String userSuppliedFilePath = filePath;
-        if (isValidFilePath(userSuppliedFilePath)) {
-            storageFilePath = userSuppliedFilePath;
-            createFileIfMissing(userSuppliedFilePath);
-        } else {
-            showToUser(String.format(MESSAGE_INVALID_FILE, userSuppliedFilePath));
+
+        if (!isValidFilePath(filePath)) {
+            showToUser(String.format(MESSAGE_INVALID_FILE, filePath));
             exitProgram();
         }
+
+        storageFilePath = filePath;
+        createFileIfMissing(filePath);
     }
 
     /**
-     * Displays the goodbye message exits the runtime.
+     * Displays the goodbye message and exits the runtime.
      */
     private static void exitProgram() {
         showToUser(MESSAGE_GOODBYE);
