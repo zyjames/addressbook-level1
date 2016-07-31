@@ -61,6 +61,8 @@ help     : Shows program usage instructions.
 ```
 
 # Testing
+Make sure the file `storage.txt` exists in the working directory.
+
 1. Open `Terminal` for Unix or `Command Prompt` for Windows
 2. Move to the project's bin directory, using `cd <project_path>/bin` in Unix and `dir <project_path>/bin` in Windows
 3. Type `java nus.todobuddy.ToDoBuddy storageFilename.txt < ../test/input.txt > ../test/output.txt`, 
