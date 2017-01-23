@@ -181,7 +181,14 @@ public class AddressBook {
 
     public static void main(String[] args) {
         showWelcomeMessage();
-        processProgramArgs(args);
+        if (args.length == 0) {
+            setupDefaultFileForStorage(); // Sets up the default file for storage.
+        } else if (args.length == 1) {
+        	setupGivenFileForStorage(args[0]); //If a valid storage file is specified, sets up that file for storage.
+        } else {
+        	showToUser(MESSAGE_INVALID_PROGRAM_ARGS);
+            exitProgram();
+        }
         loadDataFromStorage();
         while (true) {
             String userCommand = getUserInput(); // Also echo the command back to the user
@@ -222,30 +229,11 @@ public class AddressBook {
     }
 
     /**
-     * Processes the program main method run arguments.
-     * If a valid storage file is specified, sets up that file for storage.
-     * Otherwise sets up the default file for storage.
-     *
-     * @param args full program arguments passed to application main method
-     */
-    private static void processProgramArgs(String[] args) {
-    	if (args.length == 0) {
-            setupDefaultFileForStorage();
-        } else if (args.length == 1) {
-        	setupGivenFileForStorage(args[0]);
-        } else {
-        	showToUser(MESSAGE_INVALID_PROGRAM_ARGS);
-            exitProgram();
-        }
-    }
-
-    /**
      * Sets up the storage file based on the supplied file path.
      * Creates the file if it is missing.
      * Exits if the file name is not acceptable.
      */
     private static void setupGivenFileForStorage(String filePath) {
-
         if (!isValidFilePath(filePath)) {
             showToUser(String.format(MESSAGE_INVALID_FILE, filePath));
             exitProgram();
