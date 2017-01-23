@@ -37,24 +37,16 @@ import java.util.Set;
  **/
 public class AddressBook {
 
-    /**
-     * Default file path used if the user doesn't provide the file name.
-     */
+    /** Default file path used if the user doesn't provide the file name. */
     private static final String DEFAULT_STORAGE_FILEPATH = "addressbook.txt";
 
-    /**
-     * Version info of the program.
-     */
+    /** Version info of the program. */
     private static final String VERSION = "AddessBook Level 1 - Version 1.0";
 
-    /**
-     * A decorative prefix added to the beginning of lines printed by AddressBook
-     */
+    /** A decorative prefix added to the beginning of lines printed by AddressBook */
     private static final String LINE_PREFIX = "|| ";
 
-    /**
-     * A platform independent line separator.
-     */
+    /** A platform independent line separator. */
     private static final String LS = System.lineSeparator() + LINE_PREFIX;
 
     /*
@@ -136,16 +128,12 @@ public class AddressBook {
 
     private static final String DIVIDER = "===================================================";
 
-    /**
-     * Offset required to convert between 1-indexing and 0-indexing.COMMAND_
-     */
+    /** Offset required to convert between 1-indexing and 0-indexing.COMMAND_ */
     private static final int DISPLAYED_INDEX_OFFSET = 1;
 
-    /**
-     * If the first non-whitespace character in a user's input line is this, that line will be ignored.
-     */
+    /** If the first non-whitespace character in a user's input line is this, that line will be ignored. */
     private static final char INPUT_COMMENT_MARKER = '#';
-
+    
     /*
      * This variable is declared for the whole class (instead of declaring it
      * inside the readUserCommand() method to facilitate automated testing using
@@ -164,9 +152,7 @@ public class AddressBook {
      * ====================================================================================================
      */
 
-    /**
-     * List of all persons in the address book.
-     */
+    /** List of all persons in the address book. */
     private static final ArrayList<HashMap<PersonProperty, String>> ALL_PERSONS = new ArrayList<HashMap<PersonProperty, String>>();
 
     /**
@@ -176,15 +162,11 @@ public class AddressBook {
      */
     private static ArrayList<HashMap<PersonProperty, String>> latestPersonListingView = getAllPersonsInAddressBook(); // initial view is of all
 
-    /**
-     * The path to the file used for storing person data.
-     */
+    /** The path to the file used for storing person data. */
     private static String storageFilePath;
     
-    /**
-     * Attributes of the person
-     */
-    private enum PersonProperty {NAME, EMAIL, PHONE};
+    /** Attributes of the person */
+    private enum PersonProperty  {NAME, EMAIL, PHONE};
 
     /*
      * NOTE : =============================================================
@@ -202,8 +184,7 @@ public class AddressBook {
         processProgramArgs(args);
         loadDataFromStorage();
         while (true) {
-            String userCommand = getUserInput();
-            echoUserCommand(userCommand);
+            String userCommand = getUserInput(); // Also echo the command back to the user
             String feedback = executeCommand(userCommand);
             showResultToUser(feedback);
         }
@@ -218,13 +199,11 @@ public class AddressBook {
      */
 
     private static void showWelcomeMessage() {
-    	String[] message = {DIVIDER, DIVIDER, VERSION, MESSAGE_WELCOME, DIVIDER};
-        showToUser(message);
+        showToUser(DIVIDER, DIVIDER, VERSION, MESSAGE_WELCOME, DIVIDER);
     }
 
     private static void showResultToUser(String result) {
-    	String[] message = {result, DIVIDER};
-        showToUser(message);
+        showToUser(result, DIVIDER);
     }
 
     /*
@@ -250,17 +229,13 @@ public class AddressBook {
      * @param args full program arguments passed to application main method
      */
     private static void processProgramArgs(String[] args) {
-        if (args.length >= 2) {
-            showToUser(MESSAGE_INVALID_PROGRAM_ARGS);
-            exitProgram();
-        }
-
-        if (args.length == 1) {
-            setupGivenFileForStorage(args[0]);
-        }
-
-        if(args.length == 0) {
+    	if (args.length == 0) {
             setupDefaultFileForStorage();
+        } else if (args.length == 1) {
+        	setupGivenFileForStorage(args[0]);
+        } else {
+        	showToUser(MESSAGE_INVALID_PROGRAM_ARGS);
+            exitProgram();
         }
     }
 
@@ -280,12 +255,9 @@ public class AddressBook {
         createFileIfMissing(filePath);
     }
 
-    /**
-     * Displays the goodbye message and exits the runtime.
-     */
+    /** Displays the goodbye message and exits the runtime. */
     private static void exitProgram() {
-    	String[] message = {MESSAGE_GOODBYE, DIVIDER, DIVIDER};
-        showToUser(message);
+        showToUser(MESSAGE_GOODBYE, DIVIDER, DIVIDER);
         System.exit(0);
     }
 
@@ -573,9 +545,7 @@ public class AddressBook {
         return getMessageForPersonsDisplayedSummary(toBeDisplayed);
     }
 
-    /**
-     * Requests to terminate the program.
-     */
+    /** Requests to terminate the program. */
     private static void executeExitProgramRequest() {
         exitProgram();
     }
@@ -599,6 +569,8 @@ public class AddressBook {
         while (inputLine.trim().isEmpty() || inputLine.trim().charAt(0) == INPUT_COMMENT_MARKER) {
             inputLine = SCANNER.nextLine();
         }
+        
+        echoUserCommand(inputLine);
         return inputLine;
     }
 
@@ -609,28 +581,17 @@ public class AddressBook {
     * ====================================================================
     */
 
-    /**
-     * Shows a message to the user
-     */
-    private static void showToUser(String[] message) {
+    /** Shows a message to the user */
+    private static void showToUser(String... message) {
         for (String m : message) {
             System.out.println(LINE_PREFIX + m);
         }
     }
-    
-    /**
-     * Overloaded showToUser method which takes in a String variable
-     */
-    private static void showToUser(String message)
-    {
-    	String [] newMessage = {message};
-    	showToUser(newMessage);
-    }
 
     /**
      * Shows the list of persons to the user.
+     * 
      * The list will be indexed, starting from 1.
-     *
      */
     private static void showToUser(ArrayList<HashMap<PersonProperty, String>> persons) {
         String listAsString = getDisplayString(persons);
@@ -638,9 +599,7 @@ public class AddressBook {
         updateLatestViewedPersonListing(persons);
     }
 
-    /**
-     * Returns the display string representation of the list of persons.
-     */
+    /** Returns the display string representation of the list of persons. */
     private static String getDisplayString(ArrayList<HashMap<PersonProperty, String>> persons) {
         final StringBuilder messageAccumulator = new StringBuilder();
         for (int i = 0; i < persons.size(); i++) {
@@ -804,16 +763,12 @@ public class AddressBook {
         return changed;
     }
 
-    /**
-     * Returns all persons in the address book
-     */
+    /** Returns all persons in the address book */
     private static ArrayList<HashMap<PersonProperty, String>> getAllPersonsInAddressBook() {
         return ALL_PERSONS;
     }
 
-    /**
-     * Clears all persons in the address book and saves changes to file.
-     */
+    /** Clears all persons in the address book and saves changes to file. */
     private static void clearAddressBook() {
         ALL_PERSONS.clear();
         savePersonsToFile(getAllPersonsInAddressBook(), storageFilePath);
@@ -990,17 +945,18 @@ public class AddressBook {
         final int indexOfPhonePrefix = encoded.indexOf(PERSON_DATA_PREFIX_PHONE);
         final int indexOfEmailPrefix = encoded.indexOf(PERSON_DATA_PREFIX_EMAIL);
 
+        String phoneWithPrefix;
+        
         // phone is last arg, target is from prefix to end of string
         if (indexOfPhonePrefix > indexOfEmailPrefix) {
-            return removePrefixSign(encoded.substring(indexOfPhonePrefix, encoded.length()).trim(),
-                    PERSON_DATA_PREFIX_PHONE);
+        	phoneWithPrefix = encoded.substring(indexOfPhonePrefix, encoded.length()).trim();
 
         // phone is middle arg, target is from own prefix to next prefix
         } else {
-            return removePrefixSign(
-                    encoded.substring(indexOfPhonePrefix, indexOfEmailPrefix).trim(),
-                    PERSON_DATA_PREFIX_PHONE);
+        	phoneWithPrefix = encoded.substring(indexOfPhonePrefix, indexOfEmailPrefix).trim();
         }
+        
+        return removePrefix(phoneWithPrefix,PERSON_DATA_PREFIX_PHONE);
     }
 
     /**
@@ -1013,17 +969,18 @@ public class AddressBook {
         final int indexOfPhonePrefix = encoded.indexOf(PERSON_DATA_PREFIX_PHONE);
         final int indexOfEmailPrefix = encoded.indexOf(PERSON_DATA_PREFIX_EMAIL);
 
+        String emailWithPrefix;
+        
         // email is last arg, target is from prefix to end of string
         if (indexOfEmailPrefix > indexOfPhonePrefix) {
-            return removePrefixSign(encoded.substring(indexOfEmailPrefix, encoded.length()).trim(),
-                    PERSON_DATA_PREFIX_EMAIL);
+        	emailWithPrefix = encoded.substring(indexOfEmailPrefix, encoded.length()).trim();
 
         // email is middle arg, target is from own prefix to next prefix
         } else {
-            return removePrefixSign(
-                    encoded.substring(indexOfEmailPrefix, indexOfPhonePrefix).trim(),
-                    PERSON_DATA_PREFIX_EMAIL);
+        	emailWithPrefix = encoded.substring(indexOfEmailPrefix, indexOfPhonePrefix).trim();
         }
+        
+        return removePrefix(emailWithPrefix, PERSON_DATA_PREFIX_EMAIL);
     }
 
     /**
@@ -1147,14 +1104,14 @@ public class AddressBook {
      */
 
     /**
-     * Removes sign(p/, d/, etc) from parameter string
+     * Removes prefix(p/, d/, etc) from parameter string
      *
-     * @param s  Parameter as a string
-     * @param sign  Parameter sign to be removed
-     * @return  string without the sign
+     * @param fullString  Parameter as a string
+     * @param prefix  Parameter sign to be removed
+     * @return  String without the prefix
      */
-    private static String removePrefixSign(String s, String sign) {
-        return s.replace(sign, "");
+    private static String removePrefix(String fullString, String prefix) {
+        return fullString.replace(prefix, "");
     }
 
     /**
