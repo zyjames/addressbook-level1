@@ -85,6 +85,17 @@ Format: `list`
 
 Format: `sort asc/desc`  
 
+#### Edit person information: `edit`
+> Edits a person in the address book.
+
+Format: `edit NAME p/NEW_PHONE_NUMBER e/NEW_EMAIL`  
+> Words in `UPPER_CASE` are the parameters<br>
+  Phone number and email can be in any order but the name must come first.
+
+Examples: 
+* `edit John Doe p/98765432 e/johnd@gmail.com`
+* `edit Betsy Crowe e/bencrowe@gmail.com p/1234567 `
+
 #### Finding a person by keyword `find`
 > Finds persons that match given keywords
 
