@@ -134,6 +134,14 @@ public class AddressBook {
     private static final String COMMAND_SORT_PARAMETER_DESC = "desc";
     private static final String COMMAND_SORT_PARAMETER = COMMAND_SORT_PARAMETER_ASC + "/" + COMMAND_SORT_PARAMETER_DESC;
     private static final String COMMAND_SORT_EXAMPLE = COMMAND_SORT_WORD + " " + COMMAND_SORT_PARAMETER;
+    
+    private static final String COMMAND_EDIT_WORD = "edit";
+    private static final String COMMAND_EDIT_DESC = "Edits a person in the address book.";
+    private static final String COMMAND_EDIT_PARAMETERS = "NAME "
+                                                      + PERSON_DATA_PREFIX_PHONE + "PHONE_NUMBER "
+                                                      + PERSON_DATA_PREFIX_EMAIL + "EMAIL";
+    private static final String COMMAND_EDIT_EXAMPLE = COMMAND_EDIT_WORD + " John Doe p/98765432 e/johnd@gmail.com";
+    private static final String MESSAGE_EDITED = "Person edited: %1$s, Phone: %2$s, Email: %3$s";
 
     private static final String DIVIDER = "===================================================";
 
@@ -360,6 +368,8 @@ public class AddressBook {
             executeExitProgramRequest();
         case COMMAND_SORT_WORD:
         	return executeListAllPersonsInAddressBook(commandArgs);
+        case COMMAND_EDIT_WORD:
+            return executeEditPerson(commandArgs);
         default:
             return getMessageForInvalidCommandInput(commandType, getUsageInfoForAllCommands());
         }
@@ -406,7 +416,7 @@ public class AddressBook {
         addPersonToAddressBook(personToAdd);
         return getMessageForSuccessfulAddPerson(personToAdd);
     }
-
+    
     /**
      * Constructs a feedback message for a successful add person command execution.
      *
@@ -417,6 +427,40 @@ public class AddressBook {
     private static String getMessageForSuccessfulAddPerson(HashMap<PersonProperty, String> addedPerson) {
         return String.format(MESSAGE_ADDED,
                 getNameFromPerson(addedPerson), getPhoneFromPerson(addedPerson), getEmailFromPerson(addedPerson));
+    }
+    
+    /**
+     * Adds a person (specified by the command args) to the address book.
+     * The entire command arguments string is treated as a string representation of the person to add.
+     *
+     * @param commandArgs full command args string from the user
+     * @return feedback display message for the operation result
+     */
+    private static String executeEditPerson(String commandArgs) {
+        // try decoding a person from the raw args
+        final Optional<HashMap<PersonProperty, String>> decodeResult = decodePersonFromString(commandArgs);
+
+        // checks if args are valid (decode result will not be present if the person is invalid)
+        if (!decodeResult.isPresent()) {
+            return getMessageForInvalidCommandInput(COMMAND_EDIT_WORD, getUsageInfoForEditCommand());
+        }
+
+        // add the person as specified
+        final HashMap<PersonProperty, String> personToEdit = decodeResult.get();
+        editPersonToAddressBook(personToEdit);
+        return getMessageForSuccessfulEditPerson(personToEdit);
+    }
+
+    /**
+     * Constructs a feedback message for a successful add person command execution.
+     *
+     * @see #executeAddPerson(String)
+     * @param addedPerson person who was successfully added
+     * @return successful add person feedback message
+     */
+    private static String getMessageForSuccessfulEditPerson(HashMap<PersonProperty, String> editedPerson) {
+        return String.format(MESSAGE_EDITED,
+                getNameFromPerson(editedPerson), getPhoneFromPerson(editedPerson), getEmailFromPerson(editedPerson));
     }
 
     /**
@@ -816,6 +860,38 @@ public class AddressBook {
         ALL_PERSONS.add(person);
         savePersonsToFile(getAllPersonsInAddressBook(), storageFilePath);
     }
+    
+    /**
+     * Edits a person in the address book. Saves changes to storage file.
+     *
+     * @param updated person to edit
+     */
+    private static void editPersonToAddressBook(HashMap<PersonProperty, String> person) {
+    	if (updatePersonChanges(person)) {
+    		savePersonsToFile(getAllPersonsInAddressBook(), storageFilePath);
+    	} else {
+    		getMessageForInvalidCommandInput(COMMAND_EDIT_WORD, getUsageInfoForEditCommand());
+    	}
+    }
+    
+    /**
+     * Updates the properties of the person in the address book.
+     *
+     * @param updated person to edit
+     * @return true if the person is found and updated in the model
+     */
+    private static boolean updatePersonChanges(HashMap<PersonProperty, String> editPerson) {
+    	boolean hasUpdated = false;
+        for (HashMap<PersonProperty, String> person : getAllPersonsInAddressBook()) {
+            if (getNameFromPerson(person).toLowerCase().equals(getNameFromPerson(editPerson).toLowerCase())) {
+            	person.put(PersonProperty.NAME, editPerson.get(PersonProperty.NAME));
+            	person.put(PersonProperty.PHONE, editPerson.get(PersonProperty.PHONE));
+            	person.put(PersonProperty.EMAIL, editPerson.get(PersonProperty.EMAIL));
+            	hasUpdated = true;
+            }
+        }
+        return hasUpdated;
+    }
 
     /**
      * Deletes the specified person from the addressbook if it is inside. Saves any changes to storage file.
@@ -1117,6 +1193,7 @@ public class AddressBook {
                 + getUsageInfoForClearCommand() + LS
                 + getUsageInfoForExitCommand() + LS
                 + getUsageInfoForHelpCommand() + LS
+                + getUsageInfoForEditCommand() + LS
                 + getUsageInfoForSortCommand();
     }
 
@@ -1125,6 +1202,13 @@ public class AddressBook {
         return String.format(MESSAGE_COMMAND_HELP, COMMAND_ADD_WORD, COMMAND_ADD_DESC) + LS
                 + String.format(MESSAGE_COMMAND_HELP_PARAMETERS, COMMAND_ADD_PARAMETERS) + LS
                 + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_ADD_EXAMPLE) + LS;
+    }
+    
+    /** Returns the string for showing 'edit' command usage instruction */
+    private static String getUsageInfoForEditCommand() {
+        return String.format(MESSAGE_COMMAND_HELP, COMMAND_EDIT_WORD, COMMAND_EDIT_DESC) + LS
+                + String.format(MESSAGE_COMMAND_HELP_PARAMETERS, COMMAND_EDIT_PARAMETERS) + LS
+                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_EDIT_EXAMPLE) + LS;
     }
 
     /** Returns the string for showing 'find' command usage instruction */
