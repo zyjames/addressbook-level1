@@ -77,13 +77,19 @@ Examples:
 > Shows a list of persons, as an indexed list, in the order they were added to the address book, 
 oldest first.
 
-Format: `list`  
+Format: `list`
+
+#### Sorting all persons: `sort`
+
+> Shows a list of persons, as an indexed list, sorted in alphabetical order ascending/descending.
+
+Format: `sort asc/desc`  
 
 #### Finding a person by keyword `find`
 > Finds persons that match given keywords
 
 Format: `find KEYWORD [MORE_KEYWORDS]`  
-> The search is case sensitive, the order of the keywords does not matter, only the name is searched, 
+> The search is not case sensitive, the order of the keywords does not matter, only the name is searched, 
 and persons matching at least one keyword will be returned (i.e. `OR` search).
 
 Examples: 
