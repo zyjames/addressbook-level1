@@ -452,11 +452,11 @@ public class AddressBook {
     }
 
     /**
-     * Constructs a feedback message for a successful add person command execution.
+     * Constructs a feedback message for a successful edit person command execution.
      *
-     * @see #executeAddPerson(String)
-     * @param addedPerson person who was successfully added
-     * @return successful add person feedback message
+     * @see #executeEditPerson(String)
+     * @param editedPerson person
+     * @return successful edit person feedback message
      */
     private static String getMessageForSuccessfulEditPerson(HashMap<PersonProperty, String> editedPerson) {
         return String.format(MESSAGE_EDITED,
