@@ -63,6 +63,8 @@ public class AddressBook {
     private static final String MESSAGE_COMMAND_HELP = "%1$s: %2$s";
     private static final String MESSAGE_COMMAND_HELP_PARAMETERS = "\tParameters: %1$s";
     private static final String MESSAGE_COMMAND_HELP_EXAMPLE = "\tExample: %1$s";
+    private static final String MESSAGE_COMMAND_SORT_PARAMETERS = "\tParameters: %1$s";
+    private static final String MESSAGE_COMMAND_SORT_EXAMPLE = "\tExample: %1$s";
     private static final String MESSAGE_DELETE_PERSON_SUCCESS = "Deleted Person: %1$s";
     private static final String MESSAGE_DISPLAY_PERSON_DATA = "%1$s  Phone Number: %2$s  Email: %3$s";
     private static final String MESSAGE_DISPLAY_LIST_ELEMENT_INDEX = "%1$d. ";
@@ -125,6 +127,13 @@ public class AddressBook {
     private static final String COMMAND_EXIT_WORD = "exit";
     private static final String COMMAND_EXIT_DESC = "Exits the program.";
     private static final String COMMAND_EXIT_EXAMPLE = COMMAND_EXIT_WORD;
+    
+    private static final String COMMAND_SORT_WORD = "sort";
+    private static final String COMMAND_SORT_DESC = "Sorts and displays all persons as a list ascending/descending with index numbers.";
+    private static final String COMMAND_SORT_PARAMETER_ASC = "asc";
+    private static final String COMMAND_SORT_PARAMETER_DESC = "desc";
+    private static final String COMMAND_SORT_PARAMETER = COMMAND_SORT_PARAMETER_ASC + "/" + COMMAND_SORT_PARAMETER_DESC;
+    private static final String COMMAND_SORT_EXAMPLE = COMMAND_SORT_WORD + " " + COMMAND_SORT_PARAMETER;
 
     private static final String DIVIDER = "===================================================";
 
@@ -349,6 +358,8 @@ public class AddressBook {
             return getUsageInfoForAllCommands();
         case COMMAND_EXIT_WORD:
             executeExitProgramRequest();
+        case COMMAND_SORT_WORD:
+        	return executeListAllPersonsInAddressBook(commandArgs);
         default:
             return getMessageForInvalidCommandInput(commandType, getUsageInfoForAllCommands());
         }
@@ -416,7 +427,7 @@ public class AddressBook {
      * @return feedback display message for the operation result
      */
     private static String executeFindPersons(String commandArgs) {
-        final Set<String> keywords = extractKeywordsFromFindPersonArgs(commandArgs);
+        final Set<String> keywords = extractKeywordsFromFindPersonArgs(commandArgs.toLowerCase());
         final ArrayList<HashMap<PersonProperty, String>> personsFound = getPersonsWithNameContainingAnyKeyword(keywords);
         showToUser(personsFound);
         return getMessageForPersonsDisplayedSummary(personsFound);
@@ -439,7 +450,7 @@ public class AddressBook {
      * @return set of keywords as specified by args
      */
     private static Set<String> extractKeywordsFromFindPersonArgs(String findPersonCommandArgs) {
-        return new HashSet<>(splitByWhitespace(findPersonCommandArgs.trim().toLowerCase()));
+        return new HashSet<>(splitByWhitespace(findPersonCommandArgs.trim()));
     }
 
     /**
@@ -543,6 +554,63 @@ public class AddressBook {
         ArrayList<HashMap<PersonProperty, String>> toBeDisplayed = getAllPersonsInAddressBook();
         showToUser(toBeDisplayed);
         return getMessageForPersonsDisplayedSummary(toBeDisplayed);
+    }
+    
+    /**
+     * Displays all sorted persons in the address book to the user in asc/desc order.
+     *
+     * @return feedback display message for the operation result
+     */
+    private static String executeListAllPersonsInAddressBook(String commandArgs) {
+        if (!isSortPersonsArgValid(commandArgs)) {
+        	return getMessageForInvalidCommandInput(COMMAND_SORT_WORD, getUsageInfoForSortCommand());
+        }
+        final String extractedArg = extractCommandFromSortPersonsArg(commandArgs);
+        ArrayList<HashMap<PersonProperty, String>> personList = getAllPersonsInAddressBook();
+        sortAllPersonsInAddressBookAsc(personList, extractedArg);
+        showToUser(personList);
+        return getMessageForPersonsDisplayedSummary(personList);
+    }
+    
+    /**
+     * Extracts the command (asc or desc) from the raw sort args string
+     *
+     * @param rawArgs raw command args string for the sort person list command
+     * @return extracted arg
+     */
+    private static String extractCommandFromSortPersonsArg(String arg) {
+    	return arg.trim().toLowerCase();
+    }
+    
+    /**
+     * Checks validity of sort person list argument string's format.
+     *
+     * @param rawArgs raw command args string for the sort person list command
+     * @return whether the input args string is valid
+     */
+    private static boolean isSortPersonsArgValid(String rawArgs) {
+    	final String extractedArg = rawArgs.trim().toLowerCase();
+    	if (extractedArg.isEmpty()) {
+    		return false;
+    	}
+    	return true;
+    }
+    
+    /**
+     * Sorts all persons in the address book to the user.
+     *
+     * @return the sorted persons list in asc/desc order
+     */
+    private static ArrayList<HashMap<PersonProperty, String>> sortAllPersonsInAddressBookAsc(ArrayList<HashMap<PersonProperty, String>> unsortedPersonList,
+    		String arg) {
+    	if (arg.equals(COMMAND_SORT_PARAMETER_DESC)) {
+    		Collections.sort(unsortedPersonList, (HashMap<PersonProperty, String> person1, HashMap<PersonProperty, String> person2) 
+    				-> getNameFromPerson(person2).compareTo(getNameFromPerson(person1)));
+    	} else {
+    		Collections.sort(unsortedPersonList, (HashMap<PersonProperty, String> person1, HashMap<PersonProperty, String> person2) 
+    				-> getNameFromPerson(person1).compareTo(getNameFromPerson(person2)));
+    	}
+        return unsortedPersonList;
     }
 
     /** Requests to terminate the program. */
@@ -1048,7 +1116,8 @@ public class AddressBook {
                 + getUsageInfoForDeleteCommand() + LS
                 + getUsageInfoForClearCommand() + LS
                 + getUsageInfoForExitCommand() + LS
-                + getUsageInfoForHelpCommand();
+                + getUsageInfoForHelpCommand() + LS
+                + getUsageInfoForSortCommand();
     }
 
     /** Returns the string for showing 'add' command usage instruction */
@@ -1086,16 +1155,22 @@ public class AddressBook {
 
     /** Returns string for showing 'help' command usage instruction */
     private static String getUsageInfoForHelpCommand() {
-        return String.format(MESSAGE_COMMAND_HELP, COMMAND_HELP_WORD, COMMAND_HELP_DESC)
-                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_HELP_EXAMPLE);
+        return String.format(MESSAGE_COMMAND_HELP, COMMAND_HELP_WORD, COMMAND_HELP_DESC) + LS
+                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_HELP_EXAMPLE) + LS;
     }
 
     /** Returns the string for showing 'exit' command usage instruction */
     private static String getUsageInfoForExitCommand() {
-        return String.format(MESSAGE_COMMAND_HELP, COMMAND_EXIT_WORD, COMMAND_EXIT_DESC)
-                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_EXIT_EXAMPLE);
+        return String.format(MESSAGE_COMMAND_HELP, COMMAND_EXIT_WORD, COMMAND_EXIT_DESC) + LS
+                + String.format(MESSAGE_COMMAND_HELP_EXAMPLE, COMMAND_EXIT_EXAMPLE) + LS;
     }
-
+    
+    /** Returns the string for showing 'sort' command usage instruction */
+    private static String getUsageInfoForSortCommand() {
+        return String.format(MESSAGE_COMMAND_HELP, COMMAND_SORT_WORD, COMMAND_SORT_DESC) + LS
+        		+ String.format(MESSAGE_COMMAND_SORT_PARAMETERS, COMMAND_SORT_PARAMETER) + LS
+                + String.format(MESSAGE_COMMAND_SORT_EXAMPLE, COMMAND_SORT_EXAMPLE) + LS;
+    }
 
     /*
      * ============================
