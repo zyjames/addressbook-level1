@@ -249,9 +249,9 @@ public class AddressBook {
     	if (args.length == 0) {
             setupDefaultFileForStorage();
         } else if (args.length == 1) {
-        	setupGivenFileForStorage(args[0]);
+            setupGivenFileForStorage(args[0]);
         } else {
-        	showToUser(MESSAGE_INVALID_PROGRAM_ARGS);
+            showToUser(MESSAGE_INVALID_PROGRAM_ARGS);
             exitProgram();
         }
     }
@@ -1270,7 +1270,8 @@ public class AddressBook {
      * @return  String without the prefix
      */
     private static String removePrefix(String fullString, String prefix) {
-        return fullString.replace(prefix, "");
+        String prefixWithRegex = "^" + prefix;
+        return fullString.replaceFirst(prefixWithRegex, "");
     }
 
     /**
